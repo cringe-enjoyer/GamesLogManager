@@ -28,4 +28,64 @@ public class UsersGame {
     @ManyToOne
     @JoinColumn(name = "game", referencedColumnName = "game_id")
     private Game game;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "list_id")
+    private GamesList list;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getUserRating() {
+        return userRating;
+    }
+
+    public void setUserRating(int userRating) {
+        this.userRating = userRating;
+    }
+
+    public LocalDateTime getUserTime() {
+        return userTime;
+    }
+
+    public void setUserTime(LocalDateTime userTime) {
+        this.userTime = userTime;
+    }
+
+    public String getUserComment() {
+        return userComment;
+    }
+
+    public void setUserComment(String userComment) {
+        this.userComment = userComment;
+    }
+
+    public String getUserNote() {
+        return userNote;
+    }
+
+    public void setUserNote(String userNote) {
+        this.userNote = userNote;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public GamesList getList() {
+        return list;
+    }
+
+    public void setList(GamesList list) {
+        this.list = list;
+    }
 }
