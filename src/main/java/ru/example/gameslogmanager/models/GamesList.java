@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
+
 @Entity
 @Table(name = "games_list")
 public class GamesList {
@@ -19,6 +21,9 @@ public class GamesList {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "\"user\"", nullable = false)
     private User user;
+
+    @OneToMany
+    private List<UsersGame> usersGames;
 
     public int getId() {
         return id;
@@ -44,4 +49,11 @@ public class GamesList {
         this.user = user;
     }
 
+    public List<UsersGame> getUsersGames() {
+        return usersGames;
+    }
+
+    public void setUsersGames(List<UsersGame> usersGames) {
+        this.usersGames = usersGames;
+    }
 }
