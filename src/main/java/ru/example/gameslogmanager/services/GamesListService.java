@@ -37,4 +37,13 @@ public class GamesListService {
     public void save(GamesList gamesList) {
         gamesListRepository.save(gamesList);
     }
+
+    @Transactional
+    public void remove(int id) {
+        gamesListRepository.deleteById(id);
+    }
+
+    public Optional<GamesList> findByUserAndName(User user, String name) {
+        return gamesListRepository.findByUserAndName(user, name);
+    }
 }
