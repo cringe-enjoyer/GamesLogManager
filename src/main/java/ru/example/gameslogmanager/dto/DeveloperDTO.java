@@ -1,6 +1,8 @@
 package ru.example.gameslogmanager.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -9,13 +11,16 @@ import java.util.Objects;
 public class DeveloperDTO implements Serializable {
     private String name;
     private String description;
+    private List<GameDTO> games = new ArrayList<>();
 
     public DeveloperDTO() {
     }
 
-    public DeveloperDTO(String name, String description) {
+    public DeveloperDTO(String name, String description,
+                        List<GameDTO> games) {
         this.name = name;
         this.description = description;
+        this.games = games;
     }
 
     public DeveloperDTO(String name) {
@@ -38,6 +43,14 @@ public class DeveloperDTO implements Serializable {
         this.description = description;
     }
 
+    public List<GameDTO> getGames() {
+        return games;
+    }
+
+    public void setGames(List<GameDTO> games) {
+        this.games = games;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -54,8 +67,10 @@ public class DeveloperDTO implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "name = " + name + ", " +
-                "description = " + description + ")";
+        return "DeveloperDTO{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", games=" + games +
+                '}';
     }
 }

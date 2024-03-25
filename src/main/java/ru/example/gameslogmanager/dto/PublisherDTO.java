@@ -1,7 +1,9 @@
 package ru.example.gameslogmanager.dto;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * DTO for {@link ru.example.gameslogmanager.models.Publisher}
@@ -9,13 +11,17 @@ import java.util.Objects;
 public class PublisherDTO implements Serializable {
     private String name;
     private String description;
+    private Set<GameDTO> games = new LinkedHashSet<>();
+
 
     public PublisherDTO() {
     }
 
-    public PublisherDTO(String name, String description) {
+    public PublisherDTO(String name, String description,
+                        Set<GameDTO> games) {
         this.name = name;
         this.description = description;
+        this.games = games;
     }
 
     public PublisherDTO(String name) {
@@ -38,6 +44,14 @@ public class PublisherDTO implements Serializable {
         this.description = description;
     }
 
+    public Set<GameDTO> getGames() {
+        return games;
+    }
+
+    public void setGames(Set<GameDTO> games) {
+        this.games = games;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -54,8 +68,10 @@ public class PublisherDTO implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "name = " + name + ", " +
-                "description = " + description + ")";
+        return "PublisherDTO{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", games=" + games +
+                '}';
     }
 }
