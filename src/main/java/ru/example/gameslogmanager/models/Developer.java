@@ -2,6 +2,9 @@ package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(name = "developer")
@@ -16,6 +19,18 @@ public class Developer {
 
     @Column(name = "description")
     private String description;
+
+    //TODO: подумать насчёт cascade
+    @ManyToMany(mappedBy = "developers")
+    private List<Game> games;
+
+    public List<Game> getGames() {
+        return games;
+    }
+
+    public void setGames(List<Game> games) {
+        this.games = games;
+    }
 
 
     public Developer() {

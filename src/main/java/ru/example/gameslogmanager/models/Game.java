@@ -1,6 +1,7 @@
 package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "game")
@@ -19,19 +20,50 @@ public class Game {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "developer_id", referencedColumnName = "dev_id")
-    private Developer developer;
-
-    @ManyToOne
-    @JoinColumn(name = "publisher_id", referencedColumnName = "publisher_id")
-    private Publisher publisher;
-
     @Column(name = "rating")
     private double rating;
 
     @Column(name = "average_time")
     private double avgTime;
+
+    @Column(name = "short_description", length = Integer.MAX_VALUE)
+    private String shortDescription;
+
+    @Column(name = "image", length = Integer.MAX_VALUE)
+    private String image;
+
+    @Column(name = "steam_id")
+    private Integer steamId;
+
+    //TODO: Протестировать сохранение
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "game_developer",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "dev_id"))
+    private Set<Developer> developers;
+
+    //TODO: Протестировать сохранение
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(name = "game_publisher",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "publisher_id"))
+    private Set<Publisher> publishers;
+
+    public Set<Developer> getDevelopers() {
+        return developers;
+    }
+
+    public void setDevelopers(Set<Developer> developers) {
+        this.developers = developers;
+    }
+
+    public Set<Publisher> getPublishers() {
+        return publishers;
+    }
+
+    public void setPublishers(Set<Publisher> publishers) {
+        this.publishers = publishers;
+    }
 
     public Game() {
     }
@@ -72,21 +104,6 @@ public class Game {
         this.description = description;
     }
 
-    public Developer getDeveloper() {
-        return developer;
-    }
-
-    public void setDeveloper(Developer developer) {
-        this.developer = developer;
-    }
-
-    public Publisher getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(Publisher publisher) {
-        this.publisher = publisher;
-    }
 
     public double getRating() {
         return rating;
@@ -102,5 +119,45 @@ public class Game {
 
     public void setAvgTime(double avgTime) {
         this.avgTime = avgTime;
+    }
+    public Integer getSteamId() {
+        return steamId;
+    }
+
+    public void setSteamId(Integer steamId) {
+        this.steamId = steamId;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", genre='" + genre + '\'' +
+                ", description='" + description + '\'' +
+                ", rating=" + rating +
+                ", avgTime=" + avgTime +
+                ", shortDescription='" + shortDescription + '\'' +
+                ", image='" + image + '\'' +
+                ", steamId=" + steamId +
+                ", developers=" + developers +
+                ", publishers=" + publishers +
+                '}';
     }
 }
