@@ -2,7 +2,7 @@ package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "users_game")
@@ -15,9 +15,11 @@ public class UsersGame {
     @Column(name = "user_rating")
     private int userRating;
 
+    /**
+     * В минутах
+     */
     @Column(name = "user_time")
-    //TODO: посмотреть как лучше время хранить
-    private LocalDateTime userTime;
+    private Long userTime;
 
     @Column(name = "user_comment")
     private String userComment;
@@ -32,6 +34,9 @@ public class UsersGame {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "list_id")
     private GamesList list;
+
+    @Column(name = "date_added")
+    private LocalDate dateAdded;
 
     public int getId() {
         return id;
@@ -49,11 +54,11 @@ public class UsersGame {
         this.userRating = userRating;
     }
 
-    public LocalDateTime getUserTime() {
+    public Long getUserTime() {
         return userTime;
     }
 
-    public void setUserTime(LocalDateTime userTime) {
+    public void setUserTime(Long userTime) {
         this.userTime = userTime;
     }
 
@@ -87,5 +92,13 @@ public class UsersGame {
 
     public void setList(GamesList list) {
         this.list = list;
+    }
+
+    public LocalDate getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(LocalDate dateAdded) {
+        this.dateAdded = dateAdded;
     }
 }
