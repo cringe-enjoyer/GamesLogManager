@@ -13,6 +13,9 @@ public class GamesListDTO implements Serializable {
     private List<UsersGameDTO> usersGamesList;
     private long gamesCount;
 
+    public GamesListDTO() {
+    }
+
     public GamesListDTO(String name, UserDTO user) {
         this.name = name;
         this.user = user;

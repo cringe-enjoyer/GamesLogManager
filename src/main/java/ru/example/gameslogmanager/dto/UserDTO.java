@@ -7,6 +7,17 @@ public class UserDTO {
     private String steamId;
     private String nickname;
 
+    public UserDTO() {
+    }
+
+    public UserDTO(String login, String password, String email, String steamId, String nickname) {
+        this.login = login;
+        this.password = password;
+        this.email = email;
+        this.steamId = steamId;
+        this.nickname = nickname;
+    }
+
     public String getLogin() {
         return login;
     }
