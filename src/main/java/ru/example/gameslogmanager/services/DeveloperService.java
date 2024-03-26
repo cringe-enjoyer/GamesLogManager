@@ -22,4 +22,13 @@ public class DeveloperService {
     public Optional<Developer> getDeveloperById(int id) {
         return developerRepository.findById(id);
     }
+
+    public Optional<Developer> getDeveloperByName(String name) {
+        return developerRepository.findByName(name);
+    }
+
+    @Transactional
+    public void saveDeveloper(Developer developer) {
+        developerRepository.save(developer);
+    }
 }
