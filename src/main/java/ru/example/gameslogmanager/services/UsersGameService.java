@@ -29,6 +29,7 @@ public class UsersGameService {
         return usersGameRepository.findByGameAndList(game, list);
     }
 
+    @Transactional
     public void save(UsersGame game) {
         usersGameRepository.save(game);
     }

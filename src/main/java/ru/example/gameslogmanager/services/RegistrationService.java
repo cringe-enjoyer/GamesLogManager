@@ -8,6 +8,7 @@ import ru.example.gameslogmanager.models.User;
 import ru.example.gameslogmanager.repositories.UserRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class RegistrationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
