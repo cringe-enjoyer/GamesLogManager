@@ -15,7 +15,5 @@ public interface GameRepository extends JpaRepository<Game, Integer> {
 
     List<Game> findAllByGenre(String genre);
 
-    List<Game> findAllByDeveloper(Developer developer);
-
     Optional<Game> findBySteamId(Integer steamId);
 }

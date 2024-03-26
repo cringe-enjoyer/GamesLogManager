@@ -11,6 +11,7 @@ import ru.example.gameslogmanager.repositories.GameRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,7 +41,8 @@ public class GameService {
     public List<Game> findAllByDeveloperName(String developer) {
         Optional<Developer> foundDev = developerRepository.findByName(developer);
         if (foundDev.isPresent())
-            return gameRepository.findAllByDeveloper(foundDev.get());
+            return foundDev.get().getGames();
+            //return gameRepository.findAllByDevelopers(foundDev.get());
 
         return Collections.emptyList();
     }
