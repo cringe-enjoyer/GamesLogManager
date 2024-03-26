@@ -21,4 +21,13 @@ public class PublisherService {
     public Optional<Publisher> findPublisherById(int id) {
         return publisherRepository.findById(id);
     }
+
+    public Optional<Publisher> findPublisherByName(String name) {
+        return publisherRepository.findByName(name);
+    }
+
+    @Transactional
+    public void savePublisher(Publisher publisher) {
+        publisherRepository.save(publisher);
+    }
 }
