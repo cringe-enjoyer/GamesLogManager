@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 public class PublisherService {
-    private PublisherRepository publisherRepository;
+    private final PublisherRepository publisherRepository;
 
     @Autowired
     public PublisherService(PublisherRepository publisherRepository) {

@@ -12,7 +12,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class DeveloperService {
 
-    private DeveloperRepository developerRepository;
+    private final DeveloperRepository developerRepository;
 
     @Autowired
     public DeveloperService(DeveloperRepository developerRepository) {
