@@ -44,4 +44,13 @@ public class GameService {
 
         return Collections.emptyList();
     }
+
+    public Optional<Game> findGameBySteamId(int steamId) {
+        return gameRepository.findBySteamId(steamId);
+    }
+
+    @Transactional
+    public void save(Game game) {
+        gameRepository.save(game);
+    }
 }
