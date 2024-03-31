@@ -1,33 +1,44 @@
 package ru.example.gameslogmanager.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.example.gameslogmanager.models.User;
 
 import java.util.Collection;
-import java.util.Collections;
 
-public class UsersDetails implements UserDetails {
-    private final User user;
+public class UserPrincipal implements UserDetails {
+    //private final User user;
+    private final Integer id;
+    private final String login;
+    @JsonIgnore
+    private final String password;
+    private final Collection<? extends GrantedAuthority> authorities;
 
-    public UsersDetails(User user) {
-        this.user = user;
+    public UserPrincipal(Integer id, String login, String password, Collection<? extends GrantedAuthority> authorities) {
+        //this.user = user;
+        this.id = id;
+        this.password = password;
+        this.authorities = authorities;
+        this.login = login;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
+        return authorities;
+        //return Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
+        //return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getLogin();
+        return login;
+        //return user.getLogin();
     }
 
     // Аккаунт не просрочен
@@ -55,7 +66,15 @@ public class UsersDetails implements UserDetails {
     }
 
     // Нужно, чтобы получать данные аутентифицированного пользователя
-    public User getUser() {
+    /*public User getUser() {
         return user;
+    }*/
+
+    public String getLogin() {
+        return login;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }
