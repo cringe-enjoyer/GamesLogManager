@@ -33,7 +33,7 @@ public class SteamGameInfoDTO implements Serializable {
     @JsonProperty("publishers")
     private List<String> publishers;
     @JsonProperty("genres")
-    private List<GenreDTO> genres;
+    private List<SteamGameGenreDTO> genres;
 
     @JsonProperty("type")
     private String type;
@@ -119,11 +119,11 @@ public class SteamGameInfoDTO implements Serializable {
         this.publishers = publishers;
     }
 
-    public List<GenreDTO> getGenres() {
+    public List<SteamGameGenreDTO> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<GenreDTO> genres) {
+    public void setGenres(List<SteamGameGenreDTO> genres) {
         this.genres = genres;
     }
 
