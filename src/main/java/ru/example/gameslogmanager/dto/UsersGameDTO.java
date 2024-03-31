@@ -4,7 +4,6 @@ import com.lukaspradel.steamapi.data.json.playerachievements.Achievement;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -12,7 +11,7 @@ import java.util.List;
  */
 public class UsersGameDTO implements Serializable {
     private int userRating;
-    private LocalDateTime userTime;
+    private long userTime;
     private String userComment;
     private String userNote;
     private GameDTO game;
@@ -24,7 +23,7 @@ public class UsersGameDTO implements Serializable {
     public UsersGameDTO() {
     }
 
-    public UsersGameDTO(int userRating, LocalDateTime userTime, String userComment, String userNote, GameDTO game,
+    public UsersGameDTO(int userRating, long userTime, String userComment, String userNote, GameDTO game,
                         GamesListDTO list, LocalDate dateAdded) {
         this.userRating = userRating;
         this.userTime = userTime;
@@ -43,11 +42,11 @@ public class UsersGameDTO implements Serializable {
         this.userRating = userRating;
     }
 
-    public LocalDateTime getUserTime() {
+    public long getUserTime() {
         return userTime;
     }
 
-    public void setUserTime(LocalDateTime userTime) {
+    public void setUserTime(long userTime) {
         this.userTime = userTime;
     }
 
