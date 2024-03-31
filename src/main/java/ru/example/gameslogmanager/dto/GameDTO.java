@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public class GameDTO implements Serializable {
     private String title;
-    private String genre;
+    private Set<GenreDTO> genres;
     private String description;
     private Set<DeveloperDTO> developers;
     private Set<PublisherDTO> publishers;
@@ -23,11 +23,11 @@ public class GameDTO implements Serializable {
     public GameDTO() {
     }
 
-    public GameDTO(String title, String genre, String description, Set<DeveloperDTO> developers,
+    public GameDTO(String title, Set<GenreDTO> genres, String description, Set<DeveloperDTO> developers,
                    Set<PublisherDTO> publishers, double rating, double avgTime,
                    String shortDescription, String image, Integer steamId) {
         this.title = title;
-        this.genre = genre;
+        this.genres = genres;
         this.description = description;
         this.developers = developers;
         this.publishers = publishers;
@@ -46,12 +46,12 @@ public class GameDTO implements Serializable {
         this.title = title;
     }
 
-    public String getGenre() {
-        return genre;
+    public Set<GenreDTO> getGenres() {
+        return genres;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
+    public void setGenres(Set<GenreDTO> genres) {
+        this.genres = genres;
     }
 
     public String getDescription() {
@@ -122,7 +122,7 @@ public class GameDTO implements Serializable {
     public String toString() {
         return "GameDTO{" +
                 "title='" + title + '\'' +
-                ", genre='" + genre + '\'' +
+                ", genres=" + genres +
                 ", description='" + description + '\'' +
                 ", developers=" + developers +
                 ", publishers=" + publishers +
