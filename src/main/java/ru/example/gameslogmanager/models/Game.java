@@ -1,6 +1,8 @@
 package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
+
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -13,9 +15,6 @@ public class Game {
 
     @Column(name = "title")
     private String title;
-
-    @Column(name = "genre")
-    private String genre;
 
     @Column(name = "description")
     private String description;
@@ -49,27 +48,31 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "publisher_id"))
     private Set<Publisher> publishers;
 
-    public Set<Developer> getDevelopers() {
-        return developers;
-    }
-
-    public void setDevelopers(Set<Developer> developers) {
-        this.developers = developers;
-    }
-
-    public Set<Publisher> getPublishers() {
-        return publishers;
-    }
-
-    public void setPublishers(Set<Publisher> publishers) {
-        this.publishers = publishers;
-    }
+    @ManyToMany
+    @JoinTable(name = "game_genre",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> genres;
 
     public Game() {
     }
 
     public Game(String title) {
         this.title = title;
+    }
+
+    public Game(String title, String description, double rating, double avgTime, String shortDescription, String image,
+                Integer steamId, Set<Developer> developers, Set<Publisher> publishers, Set<Genre> genres) {
+        this.title = title;
+        this.description = description;
+        this.rating = rating;
+        this.avgTime = avgTime;
+        this.shortDescription = shortDescription;
+        this.image = image;
+        this.steamId = steamId;
+        this.developers = developers;
+        this.publishers = publishers;
+        this.genres = genres;
     }
 
     public int getId() {
@@ -86,14 +89,6 @@ public class Game {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
     }
 
     public String getDescription() {
@@ -120,6 +115,7 @@ public class Game {
     public void setAvgTime(double avgTime) {
         this.avgTime = avgTime;
     }
+
     public Integer getSteamId() {
         return steamId;
     }
@@ -144,12 +140,35 @@ public class Game {
         this.shortDescription = shortDescription;
     }
 
+    public Set<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(Set<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public Set<Developer> getDevelopers() {
+        return developers;
+    }
+
+    public void setDevelopers(Set<Developer> developers) {
+        this.developers = developers;
+    }
+
+    public Set<Publisher> getPublishers() {
+        return publishers;
+    }
+
+    public void setPublishers(Set<Publisher> publishers) {
+        this.publishers = publishers;
+    }
+
     @Override
     public String toString() {
         return "Game{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", genre='" + genre + '\'' +
                 ", description='" + description + '\'' +
                 ", rating=" + rating +
                 ", avgTime=" + avgTime +
@@ -158,6 +177,7 @@ public class Game {
                 ", steamId=" + steamId +
                 ", developers=" + developers +
                 ", publishers=" + publishers +
+                ", genres=" + genres +
                 '}';
     }
 }
