@@ -14,18 +14,17 @@ import com.lukaspradel.steamapi.webapi.request.GetSchemaForGameRequest;
 import com.lukaspradel.steamapi.webapi.request.builders.SteamWebApiRequestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import ru.example.gameslogmanager.dto.SteamGameInfoDTO;
 import ru.example.gameslogmanager.dto.SteamGameResponseDetails;
 import ru.example.gameslogmanager.models.*;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для работы со SteamWebAPI
@@ -39,8 +38,9 @@ public class SteamService {
     private final PublisherService publisherService;
 
     private final DeveloperService developerService;
+    private final GenreService genreService;
 
-    @Value("steam-api-key")
+    @Value("${steam-api-key}")
     private String steamApiKey;
 
     private final GamesListService gamesListService;
@@ -49,11 +49,12 @@ public class SteamService {
 
     @Autowired
     public SteamService(GamesListService gamesListService, GameService gameService, PublisherService publisherService,
-                        DeveloperService developerService) {
+                        DeveloperService developerService, GenreService genreService) {
         this.gamesListService = gamesListService;
         this.gameService = gameService;
         this.publisherService = publisherService;
         this.developerService = developerService;
+        this.genreService = genreService;
     }
 
     /**
@@ -64,16 +65,18 @@ public class SteamService {
      */
     public SteamGameInfoDTO getGameInfoById(int id) {
         String url = API_URL + "appdetails?appids=" + id;
-        RestTemplate request = new RestTemplate();
+        RestClient request = RestClient.create();
+
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAcceptLanguage(List.of(new Locale.LanguageRange("ru-RU", 0.8),
                 new Locale.LanguageRange("en-US", 0.5)));
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
+        HttpEntity<HttpHeaders> requestEntity = new HttpEntity<>(headers);
+        JsonNode response = request.get().uri(url).accept(MediaType.APPLICATION_JSON).retrieve()
+                .body(JsonNode.class);
         // Нужно пропустить корневой элемент т.к. он динамический и зависит от id игры в Steam
-        JsonNode response = request.exchange(url, HttpMethod.GET, requestEntity, JsonNode.class).getBody();
+        //JsonNode response = request.exchange(url, HttpMethod.GET, requestEntity, JsonNode.class).getBody();
 
         ObjectMapper om = new ObjectMapper();
 
@@ -167,8 +170,9 @@ public class SteamService {
                     .map(game -> {
                         UsersGame usersGame = new UsersGame();
                         usersGame.setDateAdded(LocalDate.now());
-                        usersGame.setGame(gameService.findGameBySteamId(game.getAppid().intValue())
-                                .orElse(gameService.findGameByTitle(game.getName()).orElse(null)));
+                        usersGame.setUserTime(game.getPlaytimeForever());
+                        usersGame.setGame(gameService.getGameBySteamId(game.getAppid().intValue())
+                                .orElse(gameService.getGameByTitle(game.getName()).orElse(null)));
 
                         return usersGame;
                     })
@@ -177,14 +181,18 @@ public class SteamService {
             for (com.lukaspradel.steamapi.data.json.ownedgames.Game userSteamGame : userSteamGames) {
                 UsersGame userGame = new UsersGame();
                 userGame.setUserTime(userSteamGame.getPlaytimeForever());
-                Optional<Game> game = gameService.findGameBySteamId(userSteamGame.getAppid().intValue());
+                Optional<Game> game = gameService.getGameBySteamId(userSteamGame.getAppid().intValue());
 
                 if (game.isEmpty()) {
-                    saveSteamGame(userSteamGame.getAppid().intValue());
-                    game = gameService.findGameBySteamId(userSteamGame.getAppid().intValue());
+                    if (saveSteamGame(userSteamGame.getAppid().intValue())) {
+                        game = gameService.getGameBySteamId(userSteamGame.getAppid().intValue());
+                        userGame.setGame(game.get());
+                    }
+                    else
+                        userGame.setGame(new Game(userSteamGame.getName()));
                 }
-
-                userGame.setGame(game.get());
+                else
+                    userGame.setGame(game.get());
                 usersGames.add(userGame);
             }
 
@@ -218,23 +226,33 @@ public class SteamService {
      * Получает игру из Steam и сохраняет в базу данных
      *
      * @param gameId id игры в Steam
+     * @return true если игра сохранена, иначе false
      */
     @Transactional
-    public void saveSteamGame(int gameId) {
+    public boolean saveSteamGame(int gameId) {
+        //TODO: Ошибка 429 Too many requests
         SteamGameInfoDTO gameInfo = getGameInfoById(gameId);
+        if (gameInfo == null) {
+            return false;
+        }
         Game game = new Game(gameInfo.getName());
         game.setSteamId(gameId);
         game.setImage(gameInfo.getHeaderImage());
         game.setDescription(gameInfo.getDetailedDescription());
         game.setShortDescription(gameInfo.getShortDescription());
 
-        StringBuilder genre = new StringBuilder();
-        gameInfo.getGenres().forEach(genreDTO -> genre.append(genreDTO.getDescription()).append(", "));
+/*        StringBuilder genre = new StringBuilder();
+        if (gameInfo.getGenres() != null)
+            gameInfo.getGenres().forEach(genreDTO -> genre.append(genreDTO.getDescription()).append(", "));
 
         if (!genre.isEmpty())
             genre.delete(genre.length() - 2, genre.length());
-
-        game.setGenre(genre.toString());
+        game.setGenre(genre.toString());*/
+        Set<Genre> genres = gameInfo.getGenres().stream()
+                .map(genre -> genreService.getGenreByName(genre.getDescription())
+                        .orElse(new Genre(genre.getDescription())))
+                .collect(Collectors.toSet());
+        game.setGenres(genres);
 
         Set<Publisher> publishers = new LinkedHashSet<>();
 
@@ -261,6 +279,24 @@ public class SteamService {
         game.setDevelopers(developers);
 
         gameService.save(game);
+        return true;
+    }
+
+    public long getUserTimeInGame(int gameId, String userId) {
+        SteamWebApiClient steamClient = getSteamClient();
+        GetOwnedGamesRequest request = new GetOwnedGamesRequest.GetOwnedGamesRequestBuilder(userId)
+                .includePlayedFreeGames(true).appIdsFilter(List.of(gameId)).buildRequest();
+        long time = -1;
+
+        try {
+            GetOwnedGames ownedGames = steamClient.processRequest(request);
+            if (ownedGames != null && !ownedGames.getResponse().getGames().isEmpty())
+                time = ownedGames.getResponse().getGames().get(0).getPlaytimeForever();
+        } catch (SteamApiException e) {
+            throw new RuntimeException(e);
+        }
+
+        return time;
     }
 
     private SteamWebApiClient getSteamClient() {
