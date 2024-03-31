@@ -1,30 +1,35 @@
 package ru.example.gameslogmanager.dto;
 
-public class GenreDTO {
-    private String id;
-    private String description;
+import jakarta.validation.constraints.Size;
 
-    public String getId() {
-        return id;
+import java.io.Serializable;
+import java.util.Set;
+
+/**
+ * DTO for {@link ru.example.gameslogmanager.models.Genre}
+ */
+public class GenreDTO implements Serializable {
+    @Size(max = 150)
+    private final String name;
+    private final Set<GameDTO> games;
+
+    public GenreDTO(String name, Set<GameDTO> games) {
+        this.name = name;
+        this.games = games;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getName() {
+        return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public Set<GameDTO> getGames() {
+        return games;
     }
 
     @Override
     public String toString() {
-        return "GenreDTO{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                '}';
+        return getClass().getSimpleName() + "(" +
+                "name = " + name + ", " +
+                "games = " + games + ")";
     }
 }
