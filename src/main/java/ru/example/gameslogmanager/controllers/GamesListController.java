@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.example.gameslogmanager.dto.GamesListDTO;
 import ru.example.gameslogmanager.dto.GamesListsResponseDTO;
 import ru.example.gameslogmanager.dto.UserDTO;
+import ru.example.gameslogmanager.dto.UsersGameDTO;
 import ru.example.gameslogmanager.models.GamesList;
 import ru.example.gameslogmanager.models.User;
+import ru.example.gameslogmanager.models.UsersGame;
 import ru.example.gameslogmanager.services.GamesListService;
+import ru.example.gameslogmanager.services.UsersGameService;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,11 +24,13 @@ public class GamesListController {
 
     private final GamesListService gamesListService;
     private final ModelMapper modelMapper;
+    private final UsersGameService usersGameService;
 
     @Autowired
-    public GamesListController(GamesListService gamesListService, ModelMapper modelMapper) {
+    public GamesListController(GamesListService gamesListService, ModelMapper modelMapper, UsersGameService usersGameService) {
         this.gamesListService = gamesListService;
         this.modelMapper = modelMapper;
+        this.usersGameService = usersGameService;
     }
 
     @GetMapping()
@@ -56,7 +61,7 @@ public class GamesListController {
         return new HttpEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping()
+    @DeleteMapping()
     public HttpEntity<HttpStatus> removeList(@RequestBody GamesListDTO gamesListDTO) {
         Optional<GamesList> list = gamesListService.findByUserAndName(convertToUser(gamesListDTO.getUser()),
                 gamesListDTO.getName());
@@ -69,10 +74,24 @@ public class GamesListController {
         return new HttpEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/{id}")
+    @DeleteMapping("/{id}")
     public HttpEntity<HttpStatus> removeList(@PathVariable("id") int listId) {
         gamesListService.remove(listId);
         return new HttpEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/random")
+    public UsersGameDTO getRandomGame(@PathVariable int id) {
+        Optional<GamesList> list = gamesListService.findById(id);
+        if (list.isEmpty())
+            return null;
+
+        UsersGame randomGame = usersGameService.findRandomGame(list.get());
+        return convertToUsersGameDTO(randomGame);
+    }
+
+    private UsersGameDTO convertToUsersGameDTO(UsersGame randomGame) {
+        return modelMapper.map(randomGame, UsersGameDTO.class);
     }
 
     private User convertToUser(UserDTO userDTO) {
