@@ -1,8 +1,16 @@
 package ru.example.gameslogmanager.dto;
 
+import jakarta.validation.constraints.Email;
+
+import java.util.Objects;
+
+/**
+ * DTO for {@link ru.example.gameslogmanager.models.User User}
+ */
 public class UserDTO {
     private String login;
     private String password;
+    @Email
     private String email;
     private String steamId;
     private String nickname;
@@ -56,5 +64,29 @@ public class UserDTO {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserDTO userDTO = (UserDTO) o;
+
+        if (!Objects.equals(login, userDTO.login)) return false;
+        if (!Objects.equals(password, userDTO.password)) return false;
+        if (!Objects.equals(email, userDTO.email)) return false;
+        if (!Objects.equals(steamId, userDTO.steamId)) return false;
+        return Objects.equals(nickname, userDTO.nickname);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = login != null ? login.hashCode() : 0;
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (steamId != null ? steamId.hashCode() : 0);
+        result = 31 * result + (nickname != null ? nickname.hashCode() : 0);
+        return result;
     }
 }
