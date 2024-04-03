@@ -1,6 +1,13 @@
 package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -17,6 +24,7 @@ public class User {
     private String password;
 
     @Column(name = "email")
+    @Email
     private String email;
 
     @Column(name = "steam_id")
@@ -27,6 +35,17 @@ public class User {
 
     @Column(name = "role")
     private String role;
+
+    @OneToMany(mappedBy = "friend", orphanRemoval = true)
+    private Set<FriendsList> friendsLists = new LinkedHashSet<>();
+
+    public Set<FriendsList> getFriendsLists() {
+        return friendsLists;
+    }
+
+    public void setFriendsLists(Set<FriendsList> friendsLists) {
+        this.friendsLists = friendsLists;
+    }
 
     public User() {
     }
@@ -93,5 +112,35 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (userId != user.userId) return false;
+        if (!Objects.equals(login, user.login)) return false;
+        if (!Objects.equals(password, user.password)) return false;
+        if (!Objects.equals(email, user.email)) return false;
+        if (!Objects.equals(steamId, user.steamId)) return false;
+        if (!Objects.equals(nickname, user.nickname)) return false;
+        if (!Objects.equals(role, user.role)) return false;
+        return Objects.equals(friendsLists, user.friendsLists);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userId;
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (steamId != null ? steamId.hashCode() : 0);
+        result = 31 * result + (nickname != null ? nickname.hashCode() : 0);
+        result = 31 * result + (role != null ? role.hashCode() : 0);
+        result = 31 * result + (friendsLists != null ? friendsLists.hashCode() : 0);
+        return result;
     }
 }
