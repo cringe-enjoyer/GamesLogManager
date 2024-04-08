@@ -3,6 +3,7 @@ package ru.example.gameslogmanager.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users_game")
@@ -21,8 +22,8 @@ public class UsersGame {
     @Column(name = "user_time")
     private Long userTime;
 
-    @Column(name = "user_comment")
-    private String userComment;
+    @Column(name = "user_review")
+    private String userReview;
 
     @Column(name = "user_note")
     private String userNote;
@@ -37,6 +38,19 @@ public class UsersGame {
 
     @Column(name = "date_added")
     private LocalDate dateAdded;
+
+    @Column(name = "completion_percent")
+    private Integer completionPercent;
+
+    @Column(name = "update_date")
+    private LocalDate updateDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "platform")
+    private Platform platform;
+
+    @Column(name = "public_review")
+    private boolean publicReview;
 
     public int getId() {
         return id;
@@ -62,12 +76,12 @@ public class UsersGame {
         this.userTime = userTime;
     }
 
-    public String getUserComment() {
-        return userComment;
+    public String getUserReview() {
+        return userReview;
     }
 
-    public void setUserComment(String userComment) {
-        this.userComment = userComment;
+    public void setUserReview(String userReview) {
+        this.userReview = userReview;
     }
 
     public String getUserNote() {
@@ -100,5 +114,81 @@ public class UsersGame {
 
     public void setDateAdded(LocalDate dateAdded) {
         this.dateAdded = dateAdded;
+    }
+
+    public LocalDate getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(LocalDate updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
+    }
+
+    public Integer getCompletionPercent() {
+        return completionPercent;
+    }
+
+    public void setCompletionPercent(Integer completionPercent) {
+        this.completionPercent = completionPercent;
+    }
+
+    public boolean getPublicReview() {
+        return publicReview;
+    }
+
+    public void setPublicReview(boolean publicReview) {
+        this.publicReview = publicReview;
+    }
+
+    @Override
+    public String toString() {
+        return "UsersGame{" +
+                "id=" + id +
+                ", userRating=" + userRating +
+                ", userTime=" + userTime +
+                ", userReview='" + userReview + '\'' +
+                ", userNote='" + userNote + '\'' +
+                ", game=" + game +
+                ", list=" + list +
+                ", dateAdded=" + dateAdded +
+                ", completionPercent=" + completionPercent +
+                ", updateDate=" + updateDate +
+                ", platform=" + platform +
+                ", publicReview=" + publicReview +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UsersGame usersGame = (UsersGame) o;
+        return id == usersGame.id && userRating == usersGame.userRating && Objects.equals(userTime, usersGame.userTime) && Objects.equals(userReview, usersGame.userReview) && Objects.equals(userNote, usersGame.userNote) && Objects.equals(game, usersGame.game) && Objects.equals(list, usersGame.list) && Objects.equals(dateAdded, usersGame.dateAdded) && Objects.equals(completionPercent, usersGame.completionPercent) && Objects.equals(updateDate, usersGame.updateDate) && Objects.equals(platform, usersGame.platform) && Objects.equals(publicReview, usersGame.publicReview);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + userRating;
+        result = 31 * result + Objects.hashCode(userTime);
+        result = 31 * result + Objects.hashCode(userReview);
+        result = 31 * result + Objects.hashCode(userNote);
+        result = 31 * result + Objects.hashCode(game);
+        result = 31 * result + Objects.hashCode(list);
+        result = 31 * result + Objects.hashCode(dateAdded);
+        result = 31 * result + Objects.hashCode(completionPercent);
+        result = 31 * result + Objects.hashCode(updateDate);
+        result = 31 * result + Objects.hashCode(platform);
+        result = 31 * result + Objects.hashCode(publicReview);
+        return result;
     }
 }
