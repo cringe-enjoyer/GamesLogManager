@@ -20,7 +20,7 @@ public class UsersGoalService {
         this.usersGoalRepository = usersGoalRepository;
     }
 
-    public List<UsersGoal> findGoalsByUser(User user) {
+    public List<UsersGoal> getGoalsByUser(User user) {
         return usersGoalRepository.findAllByUser(user);
     }
 
