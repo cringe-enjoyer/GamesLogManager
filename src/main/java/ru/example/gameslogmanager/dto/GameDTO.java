@@ -1,7 +1,7 @@
 package ru.example.gameslogmanager.dto;
 
 import java.io.Serializable;
-import java.util.Objects;
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -16,8 +16,11 @@ public class GameDTO implements Serializable {
     private double rating;
     private double avgTime;
     private String shortDescription;
-    private String image;
+    private String imageUrl;
     private Integer steamId;
+    private String smallImgUrl;
+    private Boolean verified;
+    private LocalDate realiseDate;
 
 
     public GameDTO() {
@@ -25,7 +28,10 @@ public class GameDTO implements Serializable {
 
     public GameDTO(String title, Set<GenreDTO> genres, String description, Set<DeveloperDTO> developers,
                    Set<PublisherDTO> publishers, double rating, double avgTime,
-                   String shortDescription, String image, Integer steamId) {
+                   String shortDescription, String imageUrl, Integer steamId,
+                   String smallImgUrl,
+                   Boolean verified,
+                   LocalDate realiseDate) {
         this.title = title;
         this.genres = genres;
         this.description = description;
@@ -34,8 +40,11 @@ public class GameDTO implements Serializable {
         this.rating = rating;
         this.avgTime = avgTime;
         this.shortDescription = shortDescription;
-        this.image = image;
+        this.imageUrl = imageUrl;
         this.steamId = steamId;
+        this.smallImgUrl = smallImgUrl;
+        this.verified = verified;
+        this.realiseDate = realiseDate;
     }
 
     public String getTitle() {
@@ -102,12 +111,12 @@ public class GameDTO implements Serializable {
         this.shortDescription = shortDescription;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Integer getSteamId() {
@@ -116,6 +125,30 @@ public class GameDTO implements Serializable {
 
     public void setSteamId(Integer steamId) {
         this.steamId = steamId;
+    }
+
+    public String getSmallImgUrl() {
+        return smallImgUrl;
+    }
+
+    public void setSmallImgUrl(String smallImgUrl) {
+        this.smallImgUrl = smallImgUrl;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
+    public LocalDate getRealiseDate() {
+        return realiseDate;
+    }
+
+    public void setRealiseDate(LocalDate realiseDate) {
+        this.realiseDate = realiseDate;
     }
 
     @Override
@@ -129,8 +162,11 @@ public class GameDTO implements Serializable {
                 ", rating=" + rating +
                 ", avgTime=" + avgTime +
                 ", shortDescription='" + shortDescription + '\'' +
-                ", image='" + image + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 ", steamId=" + steamId +
+                ", smallImgUrl='" + smallImgUrl + '\'' +
+                ", verified=" + verified +
+                ", realiseDate=" + realiseDate +
                 '}';
     }
 }
