@@ -8,7 +8,6 @@ import ru.example.gameslogmanager.models.Game;
 import ru.example.gameslogmanager.models.Genre;
 import ru.example.gameslogmanager.models.Publisher;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,19 +22,27 @@ public interface GameRepository extends JpaRepository<Game, Integer> {
     List<Game> findByTitleStartsWith(String title, Pageable pageable);
 
     //TODO: Проверить запросы
-    List<Game> findDistinctByGenresAllIgnoreCase(Set<Genre> genres);
+    List<Game> findDistinctByGenres(Set<Genre> genres);
 
-    Set<Game> findDistinctByDevelopersAndPublishers(Developer developers, Publisher publishers);
+    Set<Game> findDistinctByTitleStartingWithIgnoreCaseAndDevelopersAndPublishers(String title, Set<Developer> developers,
+                                                                                  Set<Publisher> publishers);
 
-    Set<Game> findDistinctByDevelopersAndPublishersAndGenresIn(Developer developers, Publisher publishers, Collection<Genre> genres);
+    Set<Game> findDistinctByTitleStartsWithIgnoreCaseAndDevelopersAndPublishersAndGenres(String title,
+                                                                                         Set<Developer> developers,
+                                                                                         Set<Publisher> publishers,
+                                                                                         Set<Genre> genres);
 
-    Set<Game> findDistinctByDevelopersAndGenresIn(Developer developers, Collection<Genre> genres);
+    Set<Game> findDistinctByTitleStartingWithIgnoreCaseAndDevelopersAndGenres(String title, Set<Developer> developers,
+                                                                              Set<Genre> genres);
 
-    Set<Game> findDistinctByPublishersAndGenresIn(Publisher publishers, Collection<Genre> genres);
+    Set<Game> findDistinctByTitleStartingWithIgnoreCaseAndPublishersAndGenres(String title, Set<Publisher> publishers,
+                                                                              Set<Genre> genres);
 
-    Set<Game> findDistinctByDevelopers(Developer developers);
+    Set<Game> findDistinctByTitleStartingWithIgnoreCaseAndDevelopers(String title, Set<Developer> developers);
 
-    Set<Game> findDistinctByPublishers(Publisher publishers);
+    Set<Game> findDistinctByTitleStartingWithIgnoreCaseAndPublishers(String title, Set<Publisher> publishers);
 
-    Set<Game> findDistinctByGenres(Set<Genre> genres);
+    Set<Game> findDistinctByTitleStartingWithIgnoreCaseAndGenres(String title, Set<Genre> genres);
+
+    Set<Game> findByTitleStartsWithIgnoreCase(String title);
 }

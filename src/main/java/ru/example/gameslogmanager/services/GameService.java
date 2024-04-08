@@ -18,7 +18,8 @@ public class GameService {
     private final GenreService genreService;
 
     @Autowired
-    public GameService(GameRepository gameRepository, DeveloperService developerService, PublisherService publisherService, GenreService genreService) {
+    public GameService(GameRepository gameRepository, DeveloperService developerService,
+                       PublisherService publisherService, GenreService genreService) {
         this.gameRepository = gameRepository;
         this.developerService = developerService;
         this.publisherService = publisherService;
@@ -31,10 +32,6 @@ public class GameService {
 
     public Optional<Game> getGameByTitle(String title) {
         return gameRepository.findByTitle(title);
-    }
-
-    public List<Game> getGameByGenre(Set<Genre> genres) {
-        return gameRepository.findDistinctByGenresAllIgnoreCase(genres);
     }
 
     public List<Game> getAllByDeveloperName(String developer) {
@@ -55,12 +52,12 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    public List<Game> getGamesByGenre(Set<Genre> genres) {
-        return gameRepository.findDistinctByGenresAllIgnoreCase(genres);
+    public List<Game> getGamesByGenres(Set<Genre> genres) {
+        return gameRepository.findDistinctByGenres(genres);
     }
 
     //TODO: Разобраться надо ли это тут или в список перенести
-    public Set<Game> getGamesByFilters(Map<String, Object> filters) {
+    public Set<Game> getGamesByFilters(String request, Map<String, Object> filters) {
         Developer developer = null;
         Publisher publisher = null;
         Set<Genre> genres = null;
@@ -69,33 +66,37 @@ public class GameService {
                     .orElse(null);
 
         if (filters.containsKey("publisher") && filters.get("publisher") != null)
-            publisher = publisherService.findPublisherByName(String.valueOf(filters.get("publisher")))
+            publisher = publisherService.getPublisherByName(String.valueOf(filters.get("publisher")))
                     .orElse(null);
 
         if (filters.containsKey("genres") && filters.get("genres") != null)
             genres = genreService.getAllGenresByNames((List<String>) filters.get("genres"));
 
         if (developer != null && publisher != null && genres != null && !genres.isEmpty())
-            return gameRepository.findDistinctByDevelopersAndPublishersAndGenresIn(developer, publisher, genres);
+            return gameRepository.findDistinctByTitleStartsWithIgnoreCaseAndDevelopersAndPublishersAndGenres(request,
+                    Set.of(developer), Set.of(publisher), genres);
 
         if (developer != null && publisher != null)
-            return gameRepository.findDistinctByDevelopersAndPublishers(developer, publisher);
+            return gameRepository.findDistinctByTitleStartingWithIgnoreCaseAndDevelopersAndPublishers(request,
+                    Set.of(developer), Set.of(publisher));
 
         if (developer != null && genres != null && !genres.isEmpty())
-            return gameRepository.findDistinctByDevelopersAndGenresIn(developer, genres);
+            return gameRepository.findDistinctByTitleStartingWithIgnoreCaseAndDevelopersAndGenres(request,
+                    Set.of(developer), genres);
 
         if (publisher != null && genres != null && !genres.isEmpty())
-            return gameRepository.findDistinctByPublishersAndGenresIn(publisher, genres);
+            return gameRepository.findDistinctByTitleStartingWithIgnoreCaseAndPublishersAndGenres(request,
+                    Set.of(publisher), genres);
 
         if (developer != null)
-            return gameRepository.findDistinctByDevelopers(developer);
+            return gameRepository.findDistinctByTitleStartingWithIgnoreCaseAndDevelopers(request, Set.of(developer));
 
         if (publisher != null)
-            return gameRepository.findDistinctByPublishers(publisher);
+            return gameRepository.findDistinctByTitleStartingWithIgnoreCaseAndPublishers(request, Set.of(publisher));
 
         if (genres != null && !genres.isEmpty())
-            return gameRepository.findDistinctByGenres(genres);
+            return gameRepository.findDistinctByTitleStartingWithIgnoreCaseAndGenres(request, genres);
 
-        return null; // gameRepository.find
+        return gameRepository.findByTitleStartsWithIgnoreCase(request);
     }
 }
