@@ -30,7 +30,11 @@ public class GenreService {
         genreRepository.save(genre);
     }
 
-    public Set<Genre> getAllGenresByNames(List<String> genres) {
-        return genreRepository.findDistinctByNameIn(genres);
+    public Set<Genre> getAllGenresByNames(List<String> names) {
+        return genreRepository.findDistinctByNameIn(names);
+    }
+
+    public List<Genre> getAllGenres() {
+        return genreRepository.findAll();
     }
 }
