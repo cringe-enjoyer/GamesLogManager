@@ -2,6 +2,8 @@ package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "users_goal")
 public class UsersGoal {
@@ -63,4 +65,22 @@ public class UsersGoal {
         this.year = year;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UsersGoal usersGoal = (UsersGoal) o;
+        return Objects.equals(id, usersGoal.id) && Objects.equals(goalCount, usersGoal.goalCount) && Objects.equals(done, usersGoal.done) && Objects.equals(user, usersGoal.user) && Objects.equals(year, usersGoal.year);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(goalCount);
+        result = 31 * result + Objects.hashCode(done);
+        result = 31 * result + Objects.hashCode(user);
+        result = 31 * result + Objects.hashCode(year);
+        return result;
+    }
 }
