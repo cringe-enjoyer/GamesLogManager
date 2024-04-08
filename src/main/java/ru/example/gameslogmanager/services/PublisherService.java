@@ -18,11 +18,11 @@ public class PublisherService {
         this.publisherRepository = publisherRepository;
     }
 
-    public Optional<Publisher> findPublisherById(int id) {
+    public Optional<Publisher> getPublisherById(int id) {
         return publisherRepository.findById(id);
     }
 
-    public Optional<Publisher> findPublisherByName(String name) {
+    public Optional<Publisher> getPublisherByName(String name) {
         return publisherRepository.findByName(name);
     }
 

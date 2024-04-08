@@ -1,13 +1,16 @@
 package ru.example.gameslogmanager.controllers;
 
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.example.gameslogmanager.dto.*;
 import ru.example.gameslogmanager.models.*;
 import ru.example.gameslogmanager.services.GameService;
+import ru.example.gameslogmanager.services.GamesListService;
 import ru.example.gameslogmanager.services.SteamService;
 import ru.example.gameslogmanager.services.UsersGameService;
 
@@ -25,8 +28,8 @@ public class GameController {
     private final SteamService steamService;
 
     @Autowired
-    public GameController(GameService gameService, UsersGameService usersGameService,
-                          ModelMapper modelMapper, SteamService steamService) {
+    public GameController(GameService gameService, UsersGameService usersGameService, ModelMapper modelMapper,
+                          SteamService steamService) {
         this.gameService = gameService;
         this.usersGameService = usersGameService;
         this.modelMapper = modelMapper;
@@ -68,7 +71,13 @@ public class GameController {
     }
 
     @PostMapping("/{id}")
-    public HttpEntity<HttpStatus> saveUserGameData(@RequestBody UsersGameDTO gameDTO, @PathVariable String id) {
+    public HttpEntity<HttpStatus> saveUserGameData(@RequestBody UsersGameDTO gameDTO, @PathVariable int id) {
+/*        Optional<Game> game = gameService.getGameById(id);
+        gamesListService.getByUserAndName()
+        if (game.isPresent()) {
+
+            Optional<UsersGame> usersGameInBD = usersGameService.getUsersGameByGameAndList(game, )
+        }*/
         usersGameService.save(convertToUsersGame(gameDTO));
         return new HttpEntity<>(HttpStatus.OK);
     }
@@ -87,22 +96,26 @@ public class GameController {
         return new HttpEntity<>(HttpStatus.OK);
     }
 
-    // TODO: Это надо перенести в список
-    @GetMapping("/search")
-    public GamesResponse findGames(@RequestParam(required = false) String developer,
-                                   @RequestParam(required = false) List<String> genres,
-                                   @RequestParam(required = false) String publisher) {
-        Map<String, Object> filters = new HashMap<>();
-        if (developer != null && !developer.isEmpty())
-            filters.put("dev", developer);
-        if (publisher != null && !publisher.isEmpty())
-            filters.put("publisher", publisher);
-        if (genres != null && !genres.isEmpty())
-            filters.put("genres", genres);
+    @PostMapping("/{id}/post")
+    public HttpEntity<HttpStatus> postReview(@PathVariable("id") int gameId, @RequestBody UsersGameDTO gameDTO) {
+        usersGameService.save(convertToUsersGame(gameDTO));
+        return new HttpEntity<>(HttpStatus.OK);
+    }
 
-        Set<Game> games = gameService.getGamesByFilters(filters);
+    @DeleteMapping("/{id}")
+    public HttpEntity<HttpStatus> deleteUsersGame(@PathVariable("id") int gameId, @RequestBody UsersGameDTO gameDTO) {
+        usersGameService.remove(convertToUsersGame(gameDTO));
+        return new HttpEntity<>(HttpStatus.OK);
+    }
 
-        return new GamesResponse(games.stream().map((element) -> modelMapper.map(element, GameDTO.class)).toList());
+    @PostMapping("/create")
+    public HttpEntity<HttpStatus> createGame(@RequestBody @Valid GameDTO gameDTO) {
+        gameService.save(convertToGame(gameDTO));
+        return new HttpEntity<>(HttpStatus.OK);
+    }
+
+    private Game convertToGame(GameDTO gameDTO) {
+        return modelMapper.map(gameDTO, Game.class);
     }
 
     private UsersGameDTO convertToUsersGameDTO(UsersGame userGame) {
