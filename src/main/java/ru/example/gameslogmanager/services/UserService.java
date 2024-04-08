@@ -4,10 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.example.gameslogmanager.dto.UserListResponse;
+import ru.example.gameslogmanager.models.FriendsList;
 import ru.example.gameslogmanager.models.User;
 import ru.example.gameslogmanager.repositories.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,5 +37,9 @@ public class UserService {
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+    }
+
+    public List<User> getUsersByNickname(String nickname) {
+        return userRepository.findByNicknameStartsWithIgnoreCase(nickname);
     }
 }
