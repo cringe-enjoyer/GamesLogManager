@@ -3,6 +3,7 @@ package ru.example.gameslogmanager.models;
 import jakarta.persistence.*;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -60,5 +61,23 @@ public class Publisher {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Publisher publisher = (Publisher) o;
+        return id == publisher.id && Objects.equals(name, publisher.name) && Objects.equals(description, publisher.description) && Objects.equals(games, publisher.games);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + Objects.hashCode(name);
+        result = 31 * result + Objects.hashCode(description);
+        result = 31 * result + Objects.hashCode(games);
+        return result;
     }
 }
