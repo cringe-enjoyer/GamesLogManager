@@ -35,7 +35,7 @@ public class GamesListController {
 
     @GetMapping()
     public GamesListsResponseDTO getAll(@RequestBody UserDTO userDTO) {
-        List<GamesList> allUserLists = gamesListService.findAllByUser(convertToUser(userDTO));
+        List<GamesList> allUserLists = gamesListService.getAllByUser(convertToUser(userDTO));
 
         return new GamesListsResponseDTO(allUserLists.stream()
                 .map((element) -> modelMapper.map(element, GamesListDTO.class))
@@ -44,7 +44,7 @@ public class GamesListController {
 
     @GetMapping("/{id}")
     public GamesListDTO getList(@PathVariable int id) {
-        Optional<GamesList> list = gamesListService.findById(id);
+        Optional<GamesList> list = gamesListService.getById(id);
         if (list.isPresent())
             return convertGamesListDTO(list.get());
         return null;
@@ -63,7 +63,7 @@ public class GamesListController {
 
     @DeleteMapping()
     public HttpEntity<HttpStatus> removeList(@RequestBody GamesListDTO gamesListDTO) {
-        Optional<GamesList> list = gamesListService.findByUserAndName(convertToUser(gamesListDTO.getUser()),
+        Optional<GamesList> list = gamesListService.getByUserAndName(convertToUser(gamesListDTO.getUser()),
                 gamesListDTO.getName());
 
         if (!list.isPresent())
@@ -82,11 +82,11 @@ public class GamesListController {
 
     @GetMapping("/{id}/random")
     public UsersGameDTO getRandomGame(@PathVariable int id) {
-        Optional<GamesList> list = gamesListService.findById(id);
+        Optional<GamesList> list = gamesListService.getById(id);
         if (list.isEmpty())
             return null;
 
-        UsersGame randomGame = usersGameService.findRandomGame(list.get());
+        UsersGame randomGame = usersGameService.getRandomGame(list.get());
         return convertToUsersGameDTO(randomGame);
     }
 

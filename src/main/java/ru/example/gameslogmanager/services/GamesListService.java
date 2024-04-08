@@ -21,11 +21,11 @@ public class GamesListService {
         this.gamesListRepository = gamesListRepository;
     }
 
-    public Optional<GamesList> findById(int id) {
+    public Optional<GamesList> getById(int id) {
         return gamesListRepository.findById(id);
     }
 
-    public List<GamesList> findAllByUser(User user) {
+    public List<GamesList> getAllByUser(User user) {
         return gamesListRepository.findAllByUser(user);
     }
 
@@ -43,7 +43,7 @@ public class GamesListService {
         gamesListRepository.deleteById(id);
     }
 
-    public Optional<GamesList> findByUserAndName(User user, String name) {
+    public Optional<GamesList> getByUserAndName(User user, String name) {
         return gamesListRepository.findByUserAndName(user, name);
     }
 }
