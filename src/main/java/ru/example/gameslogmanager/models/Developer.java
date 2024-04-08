@@ -2,8 +2,8 @@ package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Entity
@@ -62,5 +62,23 @@ public class Developer {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Developer developer = (Developer) o;
+        return id == developer.id && Objects.equals(name, developer.name) && Objects.equals(description, developer.description) && Objects.equals(games, developer.games);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + Objects.hashCode(name);
+        result = 31 * result + Objects.hashCode(description);
+        result = 31 * result + Objects.hashCode(games);
+        return result;
     }
 }
