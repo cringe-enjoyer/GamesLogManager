@@ -5,6 +5,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "games_list")
@@ -55,5 +56,23 @@ public class GamesList {
 
     public void setUsersGames(List<UsersGame> usersGames) {
         this.usersGames = usersGames;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GamesList gamesList = (GamesList) o;
+        return id == gamesList.id && Objects.equals(name, gamesList.name) && Objects.equals(user, gamesList.user) && Objects.equals(usersGames, gamesList.usersGames);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + Objects.hashCode(name);
+        result = 31 * result + Objects.hashCode(user);
+        result = 31 * result + Objects.hashCode(usersGames);
+        return result;
     }
 }
