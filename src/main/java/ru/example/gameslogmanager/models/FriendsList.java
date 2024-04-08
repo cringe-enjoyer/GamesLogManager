@@ -3,6 +3,8 @@ package ru.example.gameslogmanager.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "friends_list")
 public class FriendsList {
@@ -65,4 +67,21 @@ public class FriendsList {
         this.status = status;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FriendsList that = (FriendsList) o;
+        return Objects.equals(id, that.id) && Objects.equals(user, that.user) && Objects.equals(friend, that.friend) && status == that.status;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(user);
+        result = 31 * result + Objects.hashCode(friend);
+        result = 31 * result + Objects.hashCode(status);
+        return result;
+    }
 }
