@@ -37,4 +37,13 @@ public class FriendsListService {
     public Optional<FriendsList> getFriendConnectionByUserAndFriend(User user, User friend) {
         return friendsListRepository.findByUserAndFriend(user, friend);
     }
+
+    @Transactional
+    public void deleteFriendConnectionByUserAndFriend(User user, User friend) {
+        Optional<FriendsList> friendConnection = getFriendConnectionByUserAndFriend(user, friend);
+        if (friendConnection.isPresent()) {
+            FriendsList friendsList = friendConnection.get();
+            friendsListRepository.delete(friendsList);
+        }
+    }
 }
