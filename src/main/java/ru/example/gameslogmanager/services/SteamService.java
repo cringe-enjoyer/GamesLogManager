@@ -162,7 +162,7 @@ public class SteamService {
 
         List<com.lukaspradel.steamapi.data.json.ownedgames.Game> userSteamGames = getUserSteamGames(user.getSteamId());
 
-        Optional<GamesList> gamesList = gamesListService.findByUserAndName(user,
+        Optional<GamesList> gamesList = gamesListService.getByUserAndName(user,
                 listName == null || listName.isEmpty() ? "надо пройти" : listName);
 
         if (gamesList.isPresent()) {
@@ -237,7 +237,7 @@ public class SteamService {
         }
         Game game = new Game(gameInfo.getName());
         game.setSteamId(gameId);
-        game.setImage(gameInfo.getHeaderImage());
+        game.setImageUrl(gameInfo.getHeaderImage());
         game.setDescription(gameInfo.getDetailedDescription());
         game.setShortDescription(gameInfo.getShortDescription());
 
@@ -257,7 +257,7 @@ public class SteamService {
         Set<Publisher> publishers = new LinkedHashSet<>();
 
         gameInfo.getPublishers().forEach(publisher -> {
-            Optional<Publisher> publisherInDB = publisherService.findPublisherByName(publisher);
+            Optional<Publisher> publisherInDB = publisherService.getPublisherByName(publisher);
             if (publisherInDB.isPresent())
                 publishers.add(publisherInDB.get());
             else
