@@ -1,23 +1,21 @@
 package ru.example.gameslogmanager.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * DTO for {@link ru.example.gameslogmanager.models.Developer}
+ * DTO for {@link ru.example.gameslogmanager.models.Developer Developer}
  */
 public class DeveloperDTO implements Serializable {
     private String name;
     private String description;
-    private List<GameDTO> games = new ArrayList<>();
+    private List<GameDTO> games;
 
     public DeveloperDTO() {
     }
 
-    public DeveloperDTO(String name, String description,
-                        List<GameDTO> games) {
+    public DeveloperDTO(String name, String description, List<GameDTO> games) {
         this.name = name;
         this.description = description;
         this.games = games;
