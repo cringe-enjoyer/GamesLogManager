@@ -6,6 +6,7 @@ package ru.example.gameslogmanager.utils;
 public enum DefaultLists {
     FINISHED("пройдено"),
     BACKLOG("бэклог"),
+    INPROGRES("прохожу"),
     DROP("брошено");
 
     /**
