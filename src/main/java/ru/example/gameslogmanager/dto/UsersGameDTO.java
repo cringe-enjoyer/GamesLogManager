@@ -16,7 +16,7 @@ public class UsersGameDTO implements Serializable {
     private String userReview;
     private String userNote;
     private GameDTO game;
-    private GamesListDTO list;
+    private Integer listId;
     private LocalDate dateAdded;
     private Integer completionPercent;
     private LocalDate updateDate;
@@ -28,13 +28,13 @@ public class UsersGameDTO implements Serializable {
     }
 
     public UsersGameDTO(int userRating, long userTime, String userReview, String userNote, GameDTO game,
-                        GamesListDTO list, LocalDate dateAdded) {
+                        Integer listId, LocalDate dateAdded) {
         this.userRating = userRating;
         this.userTime = userTime;
         this.userReview = userReview;
         this.userNote = userNote;
         this.game = game;
-        this.list = list;
+        this.listId = listId;
         this.dateAdded = dateAdded;
     }
 
@@ -78,12 +78,12 @@ public class UsersGameDTO implements Serializable {
         this.game = game;
     }
 
-    public GamesListDTO getList() {
-        return list;
+    public Integer getListId() {
+        return listId;
     }
 
-    public void setList(GamesListDTO list) {
-        this.list = list;
+    public void setListId(Integer listId) {
+        this.listId = listId;
     }
 
     public LocalDate getDateAdded() {
@@ -141,7 +141,7 @@ public class UsersGameDTO implements Serializable {
                 ", userReview='" + userReview + '\'' +
                 ", userNote='" + userNote + '\'' +
                 ", game=" + game +
-                ", list=" + list +
+                ", listId=" + listId +
                 ", dateAdded=" + dateAdded +
                 ", completionPercent=" + completionPercent +
                 ", updateDate=" + updateDate +
@@ -156,7 +156,13 @@ public class UsersGameDTO implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
 
         UsersGameDTO that = (UsersGameDTO) o;
-        return userRating == that.userRating && userTime == that.userTime && publicReview == that.publicReview && Objects.equals(userReview, that.userReview) && Objects.equals(userNote, that.userNote) && Objects.equals(game, that.game) && Objects.equals(list, that.list) && Objects.equals(dateAdded, that.dateAdded) && Objects.equals(completionPercent, that.completionPercent) && Objects.equals(updateDate, that.updateDate) && Objects.equals(platform, that.platform) && Objects.equals(achievements, that.achievements);
+        return userRating == that.userRating && userTime == that.userTime && publicReview == that.publicReview &&
+                Objects.equals(userReview, that.userReview) && Objects.equals(userNote, that.userNote) &&
+                Objects.equals(game, that.game) && Objects.equals(listId, that.listId) &&
+                Objects.equals(dateAdded, that.dateAdded) &&
+                Objects.equals(completionPercent, that.completionPercent) &&
+                Objects.equals(updateDate, that.updateDate) && Objects.equals(platform, that.platform) &&
+                Objects.equals(achievements, that.achievements);
     }
 
     @Override
@@ -166,7 +172,7 @@ public class UsersGameDTO implements Serializable {
         result = 31 * result + Objects.hashCode(userReview);
         result = 31 * result + Objects.hashCode(userNote);
         result = 31 * result + Objects.hashCode(game);
-        result = 31 * result + Objects.hashCode(list);
+        result = 31 * result + Objects.hashCode(listId);
         result = 31 * result + Objects.hashCode(dateAdded);
         result = 31 * result + Objects.hashCode(completionPercent);
         result = 31 * result + Objects.hashCode(updateDate);
