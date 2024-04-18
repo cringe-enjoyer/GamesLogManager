@@ -8,11 +8,12 @@ import java.util.Set;
  * DTO for {@link ru.example.gameslogmanager.models.Game}
  */
 public class GameDTO implements Serializable {
+    private Integer id;
     private String title;
     private Set<GenreDTO> genres;
     private String description;
-    private Set<DeveloperDTO> developers;
-    private Set<PublisherDTO> publishers;
+    private Set<Integer> developersId;
+    private Set<Integer> publishersId;
     private double rating;
     private double avgTime;
     private String shortDescription;
@@ -26,17 +27,18 @@ public class GameDTO implements Serializable {
     public GameDTO() {
     }
 
-    public GameDTO(String title, Set<GenreDTO> genres, String description, Set<DeveloperDTO> developers,
-                   Set<PublisherDTO> publishers, double rating, double avgTime,
+    public GameDTO(Integer id, String title, Set<GenreDTO> genres, String description, Set<Integer> developers,
+                   Set<Integer> publishers, double rating, double avgTime,
                    String shortDescription, String imageUrl, Integer steamId,
                    String smallImgUrl,
                    Boolean verified,
                    LocalDate realiseDate) {
+        this.id = id;
         this.title = title;
         this.genres = genres;
         this.description = description;
-        this.developers = developers;
-        this.publishers = publishers;
+        this.developersId = developers;
+        this.publishersId = publishers;
         this.rating = rating;
         this.avgTime = avgTime;
         this.shortDescription = shortDescription;
@@ -45,6 +47,14 @@ public class GameDTO implements Serializable {
         this.smallImgUrl = smallImgUrl;
         this.verified = verified;
         this.realiseDate = realiseDate;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -87,20 +97,20 @@ public class GameDTO implements Serializable {
         this.avgTime = avgTime;
     }
 
-    public Set<DeveloperDTO> getDevelopers() {
-        return developers;
+    public Set<Integer> getDevelopersId() {
+        return developersId;
     }
 
-    public void setDevelopers(Set<DeveloperDTO> developers) {
-        this.developers = developers;
+    public void setDevelopersId(Set<Integer> developersId) {
+        this.developersId = developersId;
     }
 
-    public Set<PublisherDTO> getPublishers() {
-        return publishers;
+    public Set<Integer> getPublishersId() {
+        return publishersId;
     }
 
-    public void setPublishers(Set<PublisherDTO> publishers) {
-        this.publishers = publishers;
+    public void setPublishersId(Set<Integer> publishersId) {
+        this.publishersId = publishersId;
     }
 
     public String getShortDescription() {
@@ -157,8 +167,8 @@ public class GameDTO implements Serializable {
                 "title='" + title + '\'' +
                 ", genres=" + genres +
                 ", description='" + description + '\'' +
-                ", developers=" + developers +
-                ", publishers=" + publishers +
+                ", developersId=" + developersId +
+                ", publishersId=" + publishersId +
                 ", rating=" + rating +
                 ", avgTime=" + avgTime +
                 ", shortDescription='" + shortDescription + '\'' +
