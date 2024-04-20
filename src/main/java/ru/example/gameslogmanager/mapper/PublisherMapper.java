@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import ru.example.gameslogmanager.dto.PublisherDTO;
 import ru.example.gameslogmanager.models.Publisher;
 
+import java.util.Objects;
+
 @Component
 public class PublisherMapper {
 
@@ -17,10 +19,10 @@ public class PublisherMapper {
     }
 
     public Publisher convertToEntity(PublisherDTO publisherDTO) {
-        return modelMapper.map(publisherDTO, Publisher.class);
+        return Objects.isNull(publisherDTO) ? null : modelMapper.map(publisherDTO, Publisher.class);
     }
 
     public PublisherDTO convertToDTO(Publisher publisher) {
-        return modelMapper.map(publisher, PublisherDTO.class);
+        return Objects.isNull(publisher) ? null : modelMapper.map(publisher, PublisherDTO.class);
     }
 }
