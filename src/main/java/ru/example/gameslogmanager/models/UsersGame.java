@@ -32,10 +32,11 @@ public class UsersGame {
     @JoinColumn(name = "game", referencedColumnName = "game_id")
     private Game game;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "list_id")
     private GamesList list;
 
+    //TODO: Заменить на completeDate
     @Column(name = "date_added")
     private LocalDate dateAdded;
 
@@ -45,12 +46,15 @@ public class UsersGame {
     @Column(name = "update_date")
     private LocalDate updateDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "platform")
     private Platform platform;
 
     @Column(name = "public_review")
     private boolean publicReview;
+
+    @Column(name = "from_steam")
+    private Boolean fromSteam;
 
     public int getId() {
         return id;
@@ -148,6 +152,14 @@ public class UsersGame {
         this.publicReview = publicReview;
     }
 
+    public Boolean getFromSteam() {
+        return fromSteam;
+    }
+
+    public void setFromSteam(Boolean fromSteam) {
+        this.fromSteam = fromSteam;
+    }
+
     @Override
     public String toString() {
         return "UsersGame{" +
@@ -172,7 +184,7 @@ public class UsersGame {
         if (o == null || getClass() != o.getClass()) return false;
 
         UsersGame usersGame = (UsersGame) o;
-        return id == usersGame.id && userRating == usersGame.userRating && Objects.equals(userTime, usersGame.userTime) && Objects.equals(userReview, usersGame.userReview) && Objects.equals(userNote, usersGame.userNote) && Objects.equals(game, usersGame.game) && Objects.equals(list, usersGame.list) && Objects.equals(dateAdded, usersGame.dateAdded) && Objects.equals(completionPercent, usersGame.completionPercent) && Objects.equals(updateDate, usersGame.updateDate) && Objects.equals(platform, usersGame.platform) && Objects.equals(publicReview, usersGame.publicReview);
+        return id == usersGame.id && userRating == usersGame.userRating && publicReview == usersGame.publicReview && Objects.equals(userTime, usersGame.userTime) && Objects.equals(userReview, usersGame.userReview) && Objects.equals(userNote, usersGame.userNote) && Objects.equals(game, usersGame.game) && Objects.equals(list, usersGame.list) && Objects.equals(dateAdded, usersGame.dateAdded) && Objects.equals(completionPercent, usersGame.completionPercent) && Objects.equals(updateDate, usersGame.updateDate) && Objects.equals(platform, usersGame.platform) && Objects.equals(fromSteam, usersGame.fromSteam);
     }
 
     @Override
@@ -188,7 +200,8 @@ public class UsersGame {
         result = 31 * result + Objects.hashCode(completionPercent);
         result = 31 * result + Objects.hashCode(updateDate);
         result = 31 * result + Objects.hashCode(platform);
-        result = 31 * result + Objects.hashCode(publicReview);
+        result = 31 * result + Boolean.hashCode(publicReview);
+        result = 31 * result + Objects.hashCode(fromSteam);
         return result;
     }
 }
