@@ -1,5 +1,6 @@
 package ru.example.gameslogmanager.mapper;
 
+import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,12 @@ public class UserMapper {
     @Autowired
     public UserMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
+    }
+
+    @PostConstruct
+    public void setupMapper() {
+        modelMapper.createTypeMap(UserDTO.class, User.class).addMappings(mapper ->
+                mapper.using(new UserConvertor()).map(UserDTO::getSteamId, User::setSteamId));
     }
 
     public User convertToEntity(UserDTO userDTO) {

@@ -9,6 +9,7 @@ import java.util.Objects;
  */
 public class UserDTO {
     private String login;
+    //TODO: На любой запрос можно получить пароль пользователя
     private String password;
     @Email
     private String email;
