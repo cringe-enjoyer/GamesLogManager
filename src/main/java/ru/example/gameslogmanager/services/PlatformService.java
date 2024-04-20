@@ -7,6 +7,7 @@ import ru.example.gameslogmanager.models.Platform;
 import ru.example.gameslogmanager.repositories.PlatformRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,5 +22,9 @@ public class PlatformService {
 
     public List<Platform> getAllPlatforms() {
         return platformRepository.findAll();
+    }
+
+    public Optional<Platform> getByName(String name) {
+        return platformRepository.findByName(name);
     }
 }
