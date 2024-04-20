@@ -8,17 +8,16 @@ import java.io.Serializable;
 public class UsersGoalDTO implements Serializable {
     private Integer goalCount;
     private Integer done;
-    private UserDTO user;
+    private Integer userId;
     private Integer year;
 
     public UsersGoalDTO() {
     }
 
-    public UsersGoalDTO(Integer goalCount, Integer done, UserDTO user,
-                        Integer year) {
+    public UsersGoalDTO(Integer goalCount, Integer done, Integer userId, Integer year) {
         this.goalCount = goalCount;
         this.done = done;
-        this.user = user;
+        this.userId = userId;
         this.year = year;
     }
 
@@ -38,12 +37,12 @@ public class UsersGoalDTO implements Serializable {
         this.done = done;
     }
 
-    public UserDTO getUser() {
-        return user;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public Integer getYear() {
@@ -59,6 +58,6 @@ public class UsersGoalDTO implements Serializable {
         return getClass().getSimpleName() + "(" +
                 "goalCount = " + goalCount + ", " +
                 "done = " + done + ", " +
-                "user = " + user + ")";
+                "userId = " + userId + ")";
     }
 }
