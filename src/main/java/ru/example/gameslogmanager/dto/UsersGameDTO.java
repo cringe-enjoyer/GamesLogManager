@@ -15,7 +15,7 @@ public class UsersGameDTO implements Serializable {
     private long userTime;
     private String userReview;
     private String userNote;
-    private GameDTO game;
+    private Integer gameId;
     private Integer listId;
     private LocalDate dateAdded;
     private Integer completionPercent;
@@ -23,17 +23,18 @@ public class UsersGameDTO implements Serializable {
     private PlatformDTO platform;
     private boolean publicReview;
     private List<Achievement> achievements;
+    private Boolean fromSteam;
 
     public UsersGameDTO() {
     }
 
-    public UsersGameDTO(int userRating, long userTime, String userReview, String userNote, GameDTO game,
+    public UsersGameDTO(int userRating, long userTime, String userReview, String userNote, Integer gameId,
                         Integer listId, LocalDate dateAdded) {
         this.userRating = userRating;
         this.userTime = userTime;
         this.userReview = userReview;
         this.userNote = userNote;
-        this.game = game;
+        this.gameId = gameId;
         this.listId = listId;
         this.dateAdded = dateAdded;
     }
@@ -70,12 +71,12 @@ public class UsersGameDTO implements Serializable {
         this.userNote = userNote;
     }
 
-    public GameDTO getGame() {
-        return game;
+    public Integer getGameId() {
+        return gameId;
     }
 
-    public void setGame(GameDTO game) {
-        this.game = game;
+    public void setGameId(Integer gameId) {
+        this.gameId = gameId;
     }
 
     public Integer getListId() {
@@ -133,6 +134,14 @@ public class UsersGameDTO implements Serializable {
         this.publicReview = publicReview;
     }
 
+    public Boolean isFromSteam() {
+        return fromSteam;
+    }
+
+    public void setFromSteam(Boolean fromSteam) {
+        this.fromSteam = fromSteam;
+    }
+
     @Override
     public String toString() {
         return "UsersGameDTO{" +
@@ -140,13 +149,15 @@ public class UsersGameDTO implements Serializable {
                 ", userTime=" + userTime +
                 ", userReview='" + userReview + '\'' +
                 ", userNote='" + userNote + '\'' +
-                ", game=" + game +
+                ", gameId=" + gameId +
                 ", listId=" + listId +
                 ", dateAdded=" + dateAdded +
                 ", completionPercent=" + completionPercent +
                 ", updateDate=" + updateDate +
                 ", platform=" + platform +
+                ", publicReview=" + publicReview +
                 ", achievements=" + achievements +
+                ", fromSteam=" + fromSteam +
                 '}';
     }
 
@@ -158,7 +169,7 @@ public class UsersGameDTO implements Serializable {
         UsersGameDTO that = (UsersGameDTO) o;
         return userRating == that.userRating && userTime == that.userTime && publicReview == that.publicReview &&
                 Objects.equals(userReview, that.userReview) && Objects.equals(userNote, that.userNote) &&
-                Objects.equals(game, that.game) && Objects.equals(listId, that.listId) &&
+                Objects.equals(gameId, that.gameId) && Objects.equals(listId, that.listId) &&
                 Objects.equals(dateAdded, that.dateAdded) &&
                 Objects.equals(completionPercent, that.completionPercent) &&
                 Objects.equals(updateDate, that.updateDate) && Objects.equals(platform, that.platform) &&
@@ -171,7 +182,7 @@ public class UsersGameDTO implements Serializable {
         result = 31 * result + Long.hashCode(userTime);
         result = 31 * result + Objects.hashCode(userReview);
         result = 31 * result + Objects.hashCode(userNote);
-        result = 31 * result + Objects.hashCode(game);
+        result = 31 * result + Objects.hashCode(gameId);
         result = 31 * result + Objects.hashCode(listId);
         result = 31 * result + Objects.hashCode(dateAdded);
         result = 31 * result + Objects.hashCode(completionPercent);
