@@ -11,6 +11,9 @@ public class GenreDTO implements Serializable {
     @Size(max = 150)
     private String name;
 
+    public GenreDTO() {
+    }
+
     public GenreDTO(String name) {
         this.name = name;
     }
