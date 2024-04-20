@@ -2,10 +2,7 @@ package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
-import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,15 +34,10 @@ public class User {
     private String role;
 
     @OneToMany(mappedBy = "friend", orphanRemoval = true)
-    private Set<FriendsList> friendsLists = new LinkedHashSet<>();
+    private Set<FriendsList> friendsLists;
 
-    public Set<FriendsList> getFriendsLists() {
-        return friendsLists;
-    }
-
-    public void setFriendsLists(Set<FriendsList> friendsLists) {
-        this.friendsLists = friendsLists;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<GamesList> gamesLists;
 
     public User() {
     }
@@ -63,7 +55,7 @@ public class User {
     }
 
     public void setUserId(int userId) {
-        this.userId = this.userId;
+        this.userId = userId;
     }
 
     public String getLogin() {
@@ -112,6 +104,22 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Set<GamesList> getGamesLists() {
+        return gamesLists;
+    }
+
+    public void setGamesLists(Set<GamesList> gamesLists) {
+        this.gamesLists = gamesLists;
+    }
+
+    public Set<FriendsList> getFriendsLists() {
+        return friendsLists;
+    }
+
+    public void setFriendsLists(Set<FriendsList> friendsLists) {
+        this.friendsLists = friendsLists;
     }
 
     @Override
