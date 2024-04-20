@@ -3,20 +3,20 @@ package ru.example.gameslogmanager.dto;
 import java.util.List;
 
 public class UserListResponse {
-    private List<UserDTO> usersDTO;
+    private List<FriendDTO> friendDTO;
 
     public UserListResponse() {
     }
 
-    public UserListResponse(List<UserDTO> usersDTO) {
-        this.usersDTO = usersDTO;
+    public UserListResponse(List<FriendDTO> friendDTO) {
+        this.friendDTO = friendDTO;
     }
 
-    public List<UserDTO> getUsersDTO() {
-        return usersDTO;
+    public List<FriendDTO> getFriendDTO() {
+        return friendDTO;
     }
 
-    public void setUsersDTO(List<UserDTO> usersDTO) {
-        this.usersDTO = usersDTO;
+    public void setFriendDTO(List<FriendDTO> friendDTO) {
+        this.friendDTO = friendDTO;
     }
 }
