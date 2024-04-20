@@ -1,5 +1,8 @@
 package ru.example.gameslogmanager.dto;
 
+/**
+ * DTO для пользователя без конфиденциальных данных
+ */
 public class FriendDTO {
     private String email;
     private String steamId;
