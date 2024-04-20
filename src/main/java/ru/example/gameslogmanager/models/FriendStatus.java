@@ -1,5 +1,8 @@
 package ru.example.gameslogmanager.models;
 
+/**
+ * Статус заявки на добавление в список друзей
+ */
 public enum FriendStatus {
     /**
      * Добавлен
