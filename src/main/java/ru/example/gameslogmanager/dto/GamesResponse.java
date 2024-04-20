@@ -8,7 +8,11 @@ import java.util.List;
 public class GamesResponse {
     private List<GameDTO> games;
 
+    public GamesResponse() {
+    }
+
     public GamesResponse(List<GameDTO> games) {
+        this.games = games;
     }
 
     public List<GameDTO> getGames() {
