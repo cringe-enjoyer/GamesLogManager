@@ -17,12 +17,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 import ru.example.gameslogmanager.dto.SteamGameInfoDTO;
 import ru.example.gameslogmanager.dto.SteamGameResponseDetails;
 import ru.example.gameslogmanager.models.*;
+import ru.example.gameslogmanager.utils.DefaultLists;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,18 +67,18 @@ public class SteamService {
      */
     public SteamGameInfoDTO getGameInfoById(int id) {
         String url = API_URL + "appdetails?appids=" + id;
-        RestClient request = RestClient.create();
+        //RestClient request = RestClient.create();
 
-
+        RestTemplate request = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setAcceptLanguage(List.of(new Locale.LanguageRange("ru-RU", 0.8),
                 new Locale.LanguageRange("en-US", 0.5)));
 
         HttpEntity<HttpHeaders> requestEntity = new HttpEntity<>(headers);
-        JsonNode response = request.get().uri(url).accept(MediaType.APPLICATION_JSON).retrieve()
-                .body(JsonNode.class);
+        /*JsonNode response = request.get().uri(url).accept(MediaType.APPLICATION_JSON).retrieve()
+                .body(JsonNode.class);*/
         // Нужно пропустить корневой элемент т.к. он динамический и зависит от id игры в Steam
-        //JsonNode response = request.exchange(url, HttpMethod.GET, requestEntity, JsonNode.class).getBody();
+        JsonNode response = request.exchange(url, HttpMethod.GET, requestEntity, JsonNode.class).getBody();
 
         ObjectMapper om = new ObjectMapper();
 
@@ -151,7 +153,7 @@ public class SteamService {
     /**
      * Импортирует пользовательскую библиотеку игр из Steam в указанный список
      *
-     * @param user     пользователь
+     * @param user пользователь
      * @param listName название списка для импорта
      * @return список заполненный играми из библиотеки Steam иначе null
      */
@@ -163,9 +165,10 @@ public class SteamService {
         List<com.lukaspradel.steamapi.data.json.ownedgames.Game> userSteamGames = getUserSteamGames(user.getSteamId());
 
         Optional<GamesList> gamesList = gamesListService.getByUserAndName(user,
-                listName == null || listName.isEmpty() ? "надо пройти" : listName);
+                listName == null || listName.isEmpty() ? DefaultLists.BACKLOG.getRuValue() : listName);
 
         if (gamesList.isPresent()) {
+            //TODO: Зачем мне этот список если ниже я добавляю в него те же игры?
             List<UsersGame> usersGames = new ArrayList<>(userSteamGames.stream()
                     .map(game -> {
                         UsersGame usersGame = new UsersGame();
@@ -178,6 +181,7 @@ public class SteamService {
                     })
                     .toList());
 
+            //TODO: Добавить проверку UsersGame на наличие у пользователя и тогда просто обновить время
             for (com.lukaspradel.steamapi.data.json.ownedgames.Game userSteamGame : userSteamGames) {
                 UsersGame userGame = new UsersGame();
                 userGame.setUserTime(userSteamGame.getPlaytimeForever());
@@ -193,6 +197,7 @@ public class SteamService {
                 }
                 else
                     userGame.setGame(game.get());
+                userGame.setFromSteam(true);
                 usersGames.add(userGame);
             }
 
@@ -240,6 +245,11 @@ public class SteamService {
         game.setImageUrl(gameInfo.getHeaderImage());
         game.setDescription(gameInfo.getDetailedDescription());
         game.setShortDescription(gameInfo.getShortDescription());
+        game.setBackgroundImgUrl(gameInfo.getBackgroundRaw());
+        game.setSmallImgUrl(gameInfo.getCapsuleImage());
+        game.setRealiseDate(gameInfo.getReleaseDate().isComingSoon() ? null :
+                getParsed(gameInfo.getReleaseDate().getDate()));
+        game.setVerified(true);
 
 /*        StringBuilder genre = new StringBuilder();
         if (gameInfo.getGenres() != null)
@@ -301,5 +311,93 @@ public class SteamService {
 
     private SteamWebApiClient getSteamClient() {
         return new SteamWebApiClient.SteamWebApiClientBuilder(steamApiKey).build();
+    }
+
+    /**
+     * Переводит дату из строки в LocalDate
+     *
+     * @param date дата в виде строки
+     * @return дата в виде LocalDate
+     */
+    private static LocalDate getParsed(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
+        String normalizedDate = date.trim();
+
+        // Дата может быть в таком формате: 26 фев. 2016 г.
+        normalizedDate = normalizedDate.replace(" г.", "");
+
+        // А может быть в таком формате: 26 Feb, 2016
+        // От чего это зависит я не знаю и не понимаю
+        normalizedDate = normalizedDate.replace(",", "");
+        normalizedDate = normalizedDate.replace(".", "");
+        String[] split = normalizedDate.split(" ");
+        normalizedDate = split[0] + ".";
+
+        // При работе с текстовым месяцем выдает ошибку поэтому переводим в число
+        switch(split[1].toLowerCase()) {
+            case "jan":
+            case "янв":
+                normalizedDate += "01.";
+                break;
+
+            case "feb":
+            case "фев":
+                normalizedDate += "02.";
+                break;
+
+            case "mar":
+            case "мар":
+                normalizedDate += "03.";
+                break;
+
+            case "apr":
+            case "апр":
+                normalizedDate += "04.";
+                break;
+
+            case "may":
+            case "май":
+                normalizedDate += "05.";
+                break;
+
+            case "jun":
+            case "июн":
+                normalizedDate += "06.";
+                break;
+
+            case "jul":
+            case "июл":
+                normalizedDate += "07.";
+                break;
+
+            case "aug":
+            case "авг":
+                normalizedDate += "08.";
+                break;
+
+            case "sep":
+            case "сент":
+                normalizedDate += "09.";
+                break;
+
+            case "oct":
+            case "окт":
+                normalizedDate += "10.";
+                break;
+
+            case "nov":
+            case "ноя":
+                normalizedDate += "11.";
+                break;
+
+            case "dec":
+            case "дек":
+                normalizedDate += "12.";
+                break;
+        }
+
+        normalizedDate += split[2];
+
+        return LocalDate.parse(normalizedDate, formatter);
     }
 }
