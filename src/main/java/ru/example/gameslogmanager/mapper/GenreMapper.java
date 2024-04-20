@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import ru.example.gameslogmanager.dto.GenreDTO;
 import ru.example.gameslogmanager.models.Genre;
 
+import java.util.Objects;
+
 @Component
 public class GenreMapper {
 
@@ -17,10 +19,10 @@ public class GenreMapper {
     }
 
     public Genre convertToEntity(GenreDTO genre) {
-        return modelMapper.map(genre, Genre.class);
+        return Objects.isNull(genre) ? null : modelMapper.map(genre, Genre.class);
     }
 
     public GenreDTO convertToDTO(Genre genre) {
-        return modelMapper.map(genre, GenreDTO.class);
+        return Objects.isNull(genre) ? null : modelMapper.map(genre, GenreDTO.class);
     }
 }
