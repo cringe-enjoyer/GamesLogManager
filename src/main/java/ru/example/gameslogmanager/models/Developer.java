@@ -21,7 +21,7 @@ public class Developer {
     private String description;
 
     //TODO: подумать насчёт cascade
-    @ManyToMany(mappedBy = "developers")
+    @ManyToMany(mappedBy = "developers", fetch = FetchType.LAZY)
     private List<Game> games;
 
     public List<Game> getGames() {
