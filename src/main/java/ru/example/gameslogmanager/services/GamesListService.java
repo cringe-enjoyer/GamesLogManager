@@ -15,10 +15,12 @@ import java.util.Optional;
 public class GamesListService {
 
     private final GamesListRepository gamesListRepository;
+    private final UserService userService;
 
     @Autowired
-    public GamesListService(GamesListRepository gamesListRepository) {
+    public GamesListService(GamesListRepository gamesListRepository, UserService userService) {
         this.gamesListRepository = gamesListRepository;
+        this.userService = userService;
     }
 
     public Optional<GamesList> getById(int id) {
@@ -35,6 +37,16 @@ public class GamesListService {
 
     @Transactional(readOnly = false)
     public void save(GamesList gamesList) {
+        gamesListRepository.save(gamesList);
+    }
+
+    @Transactional(readOnly = false)
+    public void save(GamesList gamesList, int userId) {
+        Optional<User> user = userService.getUserById(userId);
+        if (user.isEmpty())
+            return;
+
+        gamesList.setUser(user.get());
         gamesListRepository.save(gamesList);
     }
 
