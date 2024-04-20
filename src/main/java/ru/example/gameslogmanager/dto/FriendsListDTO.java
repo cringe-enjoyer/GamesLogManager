@@ -11,32 +11,48 @@ import java.util.Objects;
  * DTO for {@link FriendsList}
  */
 public class FriendsListDTO implements Serializable {
+    private Integer id;
+
     @NotNull(message = "User should not be null")
-    private UserDTO user;
-    private UserDTO friend;
+    private Integer userId;
+
+    private Integer friendId;
+
     @NotNull(message = "Status should not be null")
     private FriendStatus status;
 
-    public FriendsListDTO(UserDTO user, UserDTO friend, FriendStatus status) {
-        this.user = user;
-        this.friend = friend;
+    public FriendsListDTO() {
+    }
+
+    public FriendsListDTO(Integer id, Integer userId, Integer friendId, FriendStatus status) {
+        this.id = id;
+        this.userId = userId;
+        this.friendId = friendId;
         this.status = status;
     }
 
-    public UserDTO getUser() {
-        return user;
+    public Integer getId() {
+        return id;
     }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public UserDTO getFriend() {
-        return friend;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setFriend(UserDTO friend) {
-        this.friend = friend;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getFriendId() {
+        return friendId;
+    }
+
+    public void setFriendId(Integer friendId) {
+        this.friendId = friendId;
     }
 
     public FriendStatus getStatus() {
@@ -49,10 +65,12 @@ public class FriendsListDTO implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "user = " + user + ", " +
-                "friend = " + friend + ", " +
-                "status = " + status + ")";
+        return "FriendsListDTO{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", friendId=" + friendId +
+                ", status=" + status +
+                '}';
     }
 
     @Override
@@ -61,17 +79,15 @@ public class FriendsListDTO implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
 
         FriendsListDTO that = (FriendsListDTO) o;
-
-        if (!Objects.equals(user, that.user)) return false;
-        if (!Objects.equals(friend, that.friend)) return false;
-        return status == that.status;
+        return Objects.equals(id, that.id) && Objects.equals(userId, that.userId) && Objects.equals(friendId, that.friendId) && status == that.status;
     }
 
     @Override
     public int hashCode() {
-        int result = user != null ? user.hashCode() : 0;
-        result = 31 * result + (friend != null ? friend.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(userId);
+        result = 31 * result + Objects.hashCode(friendId);
+        result = 31 * result + Objects.hashCode(status);
         return result;
     }
 }

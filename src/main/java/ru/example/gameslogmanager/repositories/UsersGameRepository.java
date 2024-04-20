@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 import ru.example.gameslogmanager.models.*;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UsersGameRepository extends JpaRepository<UsersGame, Integer> {
@@ -19,11 +19,13 @@ public interface UsersGameRepository extends JpaRepository<UsersGame, Integer> {
 
     Page<UsersGame> findAllByList(Pageable pageable, GamesList list);
 
-    List<UsersGame> findFirst3ByOrderByUpdateDateDesc(GamesList list);
+    //List<UsersGame> findFirst3ByOrderByUpdateDateDesc(GamesList list);
+    List<UsersGame> findFirstByListOrderByUpdateDateDesc(GamesList list);
 
     List<UsersGame> findByPlatformAndList_User(Platform platform, User user);
 
     List<UsersGame> findByListAndDateAddedAfter(GamesList list, LocalDate dateAdded);
 
-    List<UsersGame> findByGame_GenresAndList_User(Genre genres, User user);
+    List<UsersGame> findByGame_GenresInAndList_User(Set<Genre> game_genres, User list_user);
+    //List<UsersGame> findByList_UserAndGame_Genres(User user, Genre genres);
 }

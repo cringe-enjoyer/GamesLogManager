@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.example.gameslogmanager.dto.UsersGameDTO;
+import ru.example.gameslogmanager.mapper.UsersGameMapper;
 import ru.example.gameslogmanager.models.*;
 import ru.example.gameslogmanager.repositories.UsersGameRepository;
 
@@ -21,11 +23,19 @@ public class UsersGameService {
     
     private final GamesListService gamesListService;
 
+    private final GameService gameService;
+
+    private final UsersGameMapper usersGameMapper;
+
     @Autowired
-    public UsersGameService(UsersGameRepository usersGameRepository, SteamService steamService, GamesListService gamesListService) {
+    public UsersGameService(UsersGameRepository usersGameRepository, SteamService steamService,
+                            GamesListService gamesListService, GameService gameService,
+                            UsersGameMapper usersGameMapper) {
         this.usersGameRepository = usersGameRepository;
         this.steamService = steamService;
         this.gamesListService = gamesListService;
+        this.gameService = gameService;
+        this.usersGameMapper = usersGameMapper;
     }
 
     public Optional<UsersGame> getUsersGameById(int id) {
@@ -43,10 +53,15 @@ public class UsersGameService {
     }
 
     @Transactional
-    public void synchronizeTimeWithSteam(UsersGame usersGame, int steamId) {
-        usersGame.setUpdateDate(LocalDate.now());
-       usersGame.setUserTime(steamService.getUserTimeInGame(steamId, usersGame.getList().getUser().getSteamId()));
-       usersGameRepository.save(usersGame);
+    public void synchronizeTimeWithSteam(int usersGameId, int steamId) {
+        Optional<UsersGame> usersGame = getUsersGameById(usersGameId);
+        if (usersGame.isEmpty())
+            return;
+
+        usersGame.get().setUpdateDate(LocalDate.now());
+        usersGame.get().setUserTime(steamService.getUserTimeInGame(steamId,
+                usersGame.get().getList().getUser().getSteamId()));
+        usersGameRepository.save(usersGame.get());
     }
 
     public UsersGame getRandomGame(GamesList list) {
@@ -62,13 +77,12 @@ public class UsersGameService {
 
     @Transactional
     public void addToList(UsersGame usersGame) {
-        usersGame.setDateAdded(LocalDate.now());
         usersGame.setUpdateDate(LocalDate.now());
         usersGameRepository.save(usersGame);
     }
 
     public List<UsersGame> getLastUpdatedGames(GamesList list) {
-        return usersGameRepository.findFirst3ByOrderByUpdateDateDesc(list);
+        return usersGameRepository.findFirstByListOrderByUpdateDateDesc(list);
     }
 
     @Transactional
@@ -81,7 +95,7 @@ public class UsersGameService {
     }
 
     public List<UsersGame> getUsersGamesByGenre(Genre genre, User user) {
-        return usersGameRepository.findByGame_GenresAndList_User(genre, user);
+        return usersGameRepository.findByGame_GenresInAndList_User(Set.of(genre), user);
     }
 
     /**
@@ -98,5 +112,28 @@ public class UsersGameService {
             return usersGameRepository.findByListAndDateAddedAfter(list.get(), date);
 
         return Collections.emptyList();
+    }
+
+    @Transactional
+    public void updateByListId(UsersGameDTO usersGameDTO, int listId) {
+        Optional<GamesList> list = gamesListService.getById(listId);
+        Optional<Game> game = gameService.getGameById(usersGameDTO.getGameId());
+
+        if (list.isEmpty() || game.isEmpty())
+            return;
+
+        Optional<UsersGame> usersGame = usersGameRepository.findByGameAndList(game.get(), list.get());
+
+        if (usersGame.isPresent()) {
+            UsersGame updatedGame = usersGameMapper.convertToEntity(usersGameDTO, usersGame.get());
+
+            updatedGame.setUpdateDate(LocalDate.now());
+
+            usersGameRepository.save(updatedGame);
+        }
+    }
+
+    public long getCountInList(GamesList list) {
+        return usersGameRepository.countAllByList(list);
     }
 }
