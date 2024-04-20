@@ -1,7 +1,6 @@
 package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
@@ -13,7 +12,7 @@ public class FriendsList {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -21,9 +20,8 @@ public class FriendsList {
     @JoinColumn(name = "friend_id")
     private User friend;
 
-    @Size(max = 10)
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 10)
+    @Column(name = "status")
     private FriendStatus status;
 
     public FriendsList() {
