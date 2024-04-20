@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import ru.example.gameslogmanager.dto.DeveloperDTO;
 import ru.example.gameslogmanager.models.Developer;
 
+import java.util.Objects;
+
 @Component
 public class DeveloperMapper {
 
@@ -17,10 +19,10 @@ public class DeveloperMapper {
     }
 
     public DeveloperDTO convertToDTO(Developer developer) {
-        return modelMapper.map(developer, DeveloperDTO.class);
+        return Objects.isNull(developer) ? null : modelMapper.map(developer, DeveloperDTO.class);
     }
 
     public Developer convertToEntity(DeveloperDTO developerDTO) {
-        return modelMapper.map(developerDTO, Developer.class);
+        return Objects.isNull(developerDTO) ? null : modelMapper.map(developerDTO, Developer.class);
     }
 }
