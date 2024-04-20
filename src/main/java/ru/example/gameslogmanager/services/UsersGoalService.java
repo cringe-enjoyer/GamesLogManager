@@ -8,6 +8,7 @@ import ru.example.gameslogmanager.models.UsersGoal;
 import ru.example.gameslogmanager.repositories.UsersGoalRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,5 +33,13 @@ public class UsersGoalService {
     @Transactional(readOnly = false)
     public void delete(UsersGoal goal) {
         usersGoalRepository.delete(goal);
+    }
+
+    public Optional<UsersGoal> getUserGoalById(Integer id) {
+        return usersGoalRepository.findById(id);
+    }
+
+    public Optional<UsersGoal> getUserGoalByUser(User user) {
+        return usersGoalRepository.findByUser(user);
     }
 }
