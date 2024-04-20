@@ -1,9 +1,9 @@
 package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -14,12 +14,13 @@ public class Platform {
     @Column(name = "id")
     private Integer id;
 
+    @NotNull
     @Size(max = 100)
-    @Column(name = "name", length = 100)
+    @Column(name = "name", unique = true, length = 100)
     private String name;
 
-    @OneToMany(mappedBy = "platform")
-    private Set<UsersGame> usersGames = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "platform", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private Set<UsersGame> usersGames;
 
     public Integer getId() {
         return id;
