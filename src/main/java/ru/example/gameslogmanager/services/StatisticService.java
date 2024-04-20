@@ -95,4 +95,14 @@ public class StatisticService {
         genres.forEach(genre -> gamesByGenres.put(genre, usersGameService.getUsersGamesByGenre(genre, user)));
         return gamesByGenres;
     }
+
+    /**
+     * Возвращает количество пройденных игр за текущий год
+     * @param user пользователь чьи игры будут возвращены
+     * @return количество пройденных игр за текущий год
+     */
+    public int getFinishedGamesCountInCurrentYear(User user) {
+        return usersGameService.getGamesInListAfterDate(user, LocalDate.of(
+                LocalDate.now().getYear(), Month.JANUARY, 1), DefaultLists.FINISHED.getRuValue()).size();
+    }
 }
