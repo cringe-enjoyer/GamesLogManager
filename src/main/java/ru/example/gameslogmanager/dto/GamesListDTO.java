@@ -10,32 +10,31 @@ import java.util.Objects;
  */
 public class GamesListDTO implements Serializable {
     private String name;
-    private UserDTO user;
+    private Integer userId;
     private List<UsersGameDTO> usersGamesList;
-    private long gamesCount;
 
     public GamesListDTO() {
     }
 
-    public GamesListDTO(String name, UserDTO user) {
+    public GamesListDTO(String name, Integer userId) {
         this.name = name;
-        this.user = user;
+        this.userId = userId;
     }
 
     public String getName() {
         return name;
     }
 
-    public UserDTO getUser() {
-        return user;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public List<UsersGameDTO> getUsersGamesList() {
@@ -52,9 +51,11 @@ public class GamesListDTO implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "name = " + name + ", " +
-                "user = " + user + ")";
+        return "GamesListDTO{" +
+                "name='" + name + '\'' +
+                ", userId=" + userId +
+                ", usersGamesList=" + usersGamesList +
+                '}';
     }
 
     @Override
@@ -64,18 +65,16 @@ public class GamesListDTO implements Serializable {
 
         GamesListDTO that = (GamesListDTO) o;
 
-        if (gamesCount != that.gamesCount) return false;
         if (!Objects.equals(name, that.name)) return false;
-        if (!Objects.equals(user, that.user)) return false;
+        if (!Objects.equals(userId, that.userId)) return false;
         return Objects.equals(usersGamesList, that.usersGamesList);
     }
 
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (user != null ? user.hashCode() : 0);
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (usersGamesList != null ? usersGamesList.hashCode() : 0);
-        result = 31 * result + (int) (gamesCount ^ (gamesCount >>> 32));
         return result;
     }
 }
