@@ -1,8 +1,7 @@
 package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,12 +17,12 @@ public class GamesList {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "\"user\"", nullable = false)
+    @NotNull(message = "User should not be null")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "\"user\"")
     private User user;
 
-    @OneToMany
+    @OneToMany(mappedBy = "list", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UsersGame> usersGames;
 
     public int getId() {
