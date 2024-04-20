@@ -5,10 +5,13 @@ import org.springframework.stereotype.Repository;
 import ru.example.gameslogmanager.models.FriendsList;
 import ru.example.gameslogmanager.models.User;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface FriendsListRepository extends JpaRepository<FriendsList, Long> {
 
     Optional<FriendsList> findByUserAndFriend(User user, User friend);
+
+    List<FriendsList> findAllByUser(User user);
 }

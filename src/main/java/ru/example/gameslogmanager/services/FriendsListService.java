@@ -8,6 +8,7 @@ import ru.example.gameslogmanager.models.FriendsList;
 import ru.example.gameslogmanager.models.User;
 import ru.example.gameslogmanager.repositories.FriendsListRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,5 +46,18 @@ public class FriendsListService {
             FriendsList friendsList = friendConnection.get();
             friendsListRepository.delete(friendsList);
         }
+    }
+
+    @Transactional
+    public void deleteFriendConnectionById(long id) {
+        friendsListRepository.deleteById(id);
+    }
+
+    public List<FriendsList> getFriendsLists(User user) {
+        return friendsListRepository.findAllByUser(user);
+    }
+
+    public Optional<FriendsList> getFriendsListsById(long friendsListId) {
+        return friendsListRepository.findById(friendsListId);
     }
 }
