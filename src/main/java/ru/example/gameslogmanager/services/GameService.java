@@ -16,14 +16,16 @@ public class GameService {
     private final DeveloperService developerService;
     private final PublisherService publisherService;
     private final GenreService genreService;
+    private final GamesListService gamesListService;
 
     @Autowired
     public GameService(GameRepository gameRepository, DeveloperService developerService,
-                       PublisherService publisherService, GenreService genreService) {
+                       PublisherService publisherService, GenreService genreService, GamesListService gamesListService) {
         this.gameRepository = gameRepository;
         this.developerService = developerService;
         this.publisherService = publisherService;
         this.genreService = genreService;
+        this.gamesListService = gamesListService;
     }
 
     public Optional<Game> getGameById(int id) {
@@ -98,5 +100,10 @@ public class GameService {
             return gameRepository.findDistinctByTitleStartingWithIgnoreCaseAndGenres(request, genres);
 
         return gameRepository.findByTitleStartsWithIgnoreCase(request);
+    }
+
+    public List<Game> getGamesInList(User user, String name) {
+        Optional<GamesList> list = gamesListService.getByUserAndName(user, name);
+        return list.map(gamesList -> gamesList.getUsersGames().stream().map(UsersGame::getGame).toList()).orElse(Collections.emptyList());
     }
 }
