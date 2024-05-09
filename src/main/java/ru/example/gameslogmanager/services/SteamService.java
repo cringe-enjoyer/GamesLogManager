@@ -172,7 +172,7 @@ public class SteamService {
             List<UsersGame> usersGames = new ArrayList<>(userSteamGames.stream()
                     .map(game -> {
                         UsersGame usersGame = new UsersGame();
-                        usersGame.setDateAdded(LocalDate.now());
+                        //usersGame.setDateFinished(LocalDate.now());
                         usersGame.setUserTime(game.getPlaytimeForever());
                         usersGame.setGame(gameService.getGameBySteamId(game.getAppid().intValue())
                                 .orElse(gameService.getGameByTitle(game.getName()).orElse(null)));

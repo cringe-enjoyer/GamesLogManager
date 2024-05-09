@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+/src/main/resources/spec.yaml
+/src/main/resources/GamesLogManager-openapi.yaml
+/src/main/resources/spec.self-contained.json
