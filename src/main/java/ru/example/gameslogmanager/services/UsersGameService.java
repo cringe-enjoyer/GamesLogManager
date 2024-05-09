@@ -9,6 +9,7 @@ import ru.example.gameslogmanager.dto.UsersGameDTO;
 import ru.example.gameslogmanager.mapper.UsersGameMapper;
 import ru.example.gameslogmanager.models.*;
 import ru.example.gameslogmanager.repositories.UsersGameRepository;
+import ru.example.gameslogmanager.dto.GamesPerMonthResponse;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -94,6 +95,10 @@ public class UsersGameService {
         return usersGameRepository.findByPlatformAndList_User(platform, user);
     }
 
+    public long getUsersGamesCountByPlatformAndUser(Platform platform, User user) {
+        return usersGameRepository.countByPlatformAndList_User(platform, user);
+    }
+
     public List<UsersGame> getUsersGamesByGenre(Genre genre, User user) {
         return usersGameRepository.findByGame_GenresInAndList_User(Set.of(genre), user);
     }
@@ -109,7 +114,7 @@ public class UsersGameService {
         Optional<GamesList> list = gamesListService.getByUserAndName(user, listName);
 
         if (list.isPresent())
-            return usersGameRepository.findByListAndDateAddedAfter(list.get(), date);
+            return usersGameRepository.findByListAndDateFinishedAfter(list.get(), date);
 
         return Collections.emptyList();
     }
@@ -135,5 +140,26 @@ public class UsersGameService {
 
     public long getCountInList(GamesList list) {
         return usersGameRepository.countAllByList(list);
+    }
+
+    public List<GamesPerMonthResponse> getAllByUserAndBetweenDateFinished(User user, LocalDate start, LocalDate end) {
+        return usersGameRepository.findByList_UserAndDateFinishedBetween(user, start, end);
+        //return usersGameRepository.findAllByList_UserAndDateFinishedBetweenOrderByDateFinishedDesc(user, start, end);
+    }
+
+    public List<UsersGame> get5LastFinishedGames(User user) {
+        return usersGameRepository.findFirst5ByList_UserOrderByDateFinishedDesc(user);
+    }
+
+    public Optional<UsersGame> getLastFinishedGame(User user) {
+        return usersGameRepository.findFirstByList_UserOrderByDateFinishedDesc(user);
+    }
+
+    public Long getCountGamesByGenre(Genre genre, User user) {
+        return usersGameRepository.countByGame_GenresInAndList_User(List.of(genre), user);
+    }
+
+    public Optional<UsersGame> getUsersGameByGameAndUser(Game game, User user) {
+        return usersGameRepository.findByGameAndList_User(game, user);
     }
 }
