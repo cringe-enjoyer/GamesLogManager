@@ -5,6 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.example.gameslogmanager.dto.UsersGameDTO;
+import ru.example.gameslogmanager.exceptions.UsersGameNotFoundException;
 import ru.example.gameslogmanager.models.Game;
 import ru.example.gameslogmanager.models.GamesList;
 import ru.example.gameslogmanager.models.UsersGame;
@@ -33,21 +34,6 @@ public class UsersGameController {
         this.steamService = steamService;
     }
 
-    @GetMapping("/{id}")
-    public UsersGameDTO getUserGameById(@PathVariable("id") Integer userGameId) {
-        Optional<UsersGame> game = usersGameService.getUsersGameById(userGameId);
-        if (game.isEmpty())
-            return null;
-
-        UsersGameDTO response = usersGameMapper.convertToDTO(game.get());
-
-        if (game.get().getGame().getSteamId() != null && game.get().getFromSteam())
-            response.setAchievements(steamService.getUserAchievementsForGame(game.get().getGame(),
-                    game.get().getList().getUser()));
-
-        return response;
-    }
-
     @GetMapping()
     public UsersGameDTO getUserGameByGameAndList(@RequestParam Integer gameId, @RequestParam Integer listId) {
         Optional<Game> game = gameService.getGameById(gameId);
@@ -70,6 +56,53 @@ public class UsersGameController {
 
         return response;
     }
+
+    @GetMapping("/{id}")
+    public UsersGameDTO getUserGameById(@PathVariable("id") Integer userGameId) {
+        Optional<UsersGame> game = usersGameService.getUsersGameById(userGameId);
+        if (game.isEmpty()) {
+            String message = "Game with id " + userGameId + " not found";
+            throw new UsersGameNotFoundException(message);
+        }
+
+        UsersGameDTO response = usersGameMapper.convertToDTO(game.get());
+
+        if (game.get().getGame().getSteamId() != null && game.get().getFromSteam())
+            response.setAchievements(steamService.getUserAchievementsForGame(game.get().getGame(),
+                    game.get().getList().getUser()));
+
+        return response;
+    }
+
+/*    @GetMapping()
+    public UsersGameDTO getUserGameByGameAndUser(@RequestParam Integer gameId, @RequestParam Integer userId) {
+        Optional<User> user = userService.getUserById(userId);
+        if (user.isEmpty()) {
+            String message = "User with id not found";
+            throw new UserNotFoundException(message);
+        }
+
+        Optional<Game> game = gameService.getGameById(gameId);
+
+        if (game.isEmpty()) {
+            String message = "Game with not found";
+            throw new GameNotFoundException(message);
+        }
+
+        Optional<UsersGame> usersGame = usersGameService.getUsersGameByGameAndUser(game.get(), user.get());
+
+        if (usersGame.isEmpty()) {
+            String message = "Users game not found";
+            throw new UsersGameNotFoundException(message);
+        }
+
+        UsersGameDTO response = usersGameMapper.convertToDTO(usersGame.get());
+
+        if (game.get().getSteamId() != null && usersGame.get().getFromSteam())
+            response.setAchievements(steamService.getUserAchievementsForGame(game.get(), user.get()));
+
+        return response;
+    }*/
 
     @DeleteMapping("/{id}")
     public HttpEntity<HttpStatus> deleteUsersGame(@PathVariable("id") int usersGameId) {
