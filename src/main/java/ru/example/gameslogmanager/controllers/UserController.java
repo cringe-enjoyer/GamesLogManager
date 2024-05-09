@@ -6,9 +6,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.example.gameslogmanager.dto.FriendDTO;
 import ru.example.gameslogmanager.dto.FriendsListDTO;
 import ru.example.gameslogmanager.dto.GamesListDTO;
 import ru.example.gameslogmanager.dto.UserDTO;
+import ru.example.gameslogmanager.exceptions.UserNotFoundException;
+import ru.example.gameslogmanager.mapper.FriendMapper;
 import ru.example.gameslogmanager.mapper.GamesListMapper;
 import ru.example.gameslogmanager.mapper.UserMapper;
 import ru.example.gameslogmanager.models.*;
@@ -29,11 +32,12 @@ public class UserController {
     private final GamesListService gamesListService;
     private final GamesListMapper gamesListMapper;
     private final UserMapper userMapper;
+    private final FriendMapper friendMapper;
 
     @Autowired
     public UserController(UserService userService, SteamService steamService, FriendsListService friendsListService,
                           UsersGameService usersGameService, GamesListService gamesListService,
-                          GamesListMapper gamesListMapper, UserMapper userMapper) {
+                          GamesListMapper gamesListMapper, UserMapper userMapper, FriendMapper friendMapper) {
         this.userService = userService;
         this.steamService = steamService;
         this.friendsListService = friendsListService;
@@ -41,6 +45,7 @@ public class UserController {
         this.gamesListService = gamesListService;
         this.gamesListMapper = gamesListMapper;
         this.userMapper = userMapper;
+        this.friendMapper = friendMapper;
     }
 
     //TODO: Ограничить доступ другим пользователям
@@ -110,5 +115,16 @@ public class UserController {
             return Collections.emptyList();
 
         return usersGameService.getLastUpdatedGames(listFinished.get());
+    }
+
+    @GetMapping("/{id}")
+    public FriendDTO getUser(@PathVariable("id") int userId) {
+        Optional<User> user = userService.getUserById(userId);
+        if (user.isEmpty()) {
+            String message = "User not found";
+            throw new UserNotFoundException(message);
+        }
+
+        return friendMapper.convertToDTO(user.get());
     }
 }
