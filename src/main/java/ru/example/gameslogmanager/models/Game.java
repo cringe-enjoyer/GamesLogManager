@@ -61,8 +61,7 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "publisher_id"))
     private Set<Publisher> publishers;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
-            CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "game_genre",
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
