@@ -17,7 +17,7 @@ public class UsersGameDTO implements Serializable {
     private String userNote;
     private Integer gameId;
     private Integer listId;
-    private LocalDate dateAdded;
+    private LocalDate dateFinished;
     private Integer completionPercent;
     private LocalDate updateDate;
     private PlatformDTO platform;
@@ -29,14 +29,14 @@ public class UsersGameDTO implements Serializable {
     }
 
     public UsersGameDTO(int userRating, long userTime, String userReview, String userNote, Integer gameId,
-                        Integer listId, LocalDate dateAdded) {
+                        Integer listId, LocalDate dateFinished) {
         this.userRating = userRating;
         this.userTime = userTime;
         this.userReview = userReview;
         this.userNote = userNote;
         this.gameId = gameId;
         this.listId = listId;
-        this.dateAdded = dateAdded;
+        this.dateFinished = dateFinished;
     }
 
     public int getUserRating() {
@@ -87,12 +87,12 @@ public class UsersGameDTO implements Serializable {
         this.listId = listId;
     }
 
-    public LocalDate getDateAdded() {
-        return dateAdded;
+    public LocalDate getDateFinished() {
+        return dateFinished;
     }
 
-    public void setDateAdded(LocalDate dateAdded) {
-        this.dateAdded = dateAdded;
+    public void setDateFinished(LocalDate dateFinished) {
+        this.dateFinished = dateFinished;
     }
 
     public List<Achievement> getAchievements() {
@@ -151,7 +151,7 @@ public class UsersGameDTO implements Serializable {
                 ", userNote='" + userNote + '\'' +
                 ", gameId=" + gameId +
                 ", listId=" + listId +
-                ", dateAdded=" + dateAdded +
+                ", dateFinished=" + dateFinished +
                 ", completionPercent=" + completionPercent +
                 ", updateDate=" + updateDate +
                 ", platform=" + platform +
@@ -170,7 +170,7 @@ public class UsersGameDTO implements Serializable {
         return userRating == that.userRating && userTime == that.userTime && publicReview == that.publicReview &&
                 Objects.equals(userReview, that.userReview) && Objects.equals(userNote, that.userNote) &&
                 Objects.equals(gameId, that.gameId) && Objects.equals(listId, that.listId) &&
-                Objects.equals(dateAdded, that.dateAdded) &&
+                Objects.equals(dateFinished, that.dateFinished) &&
                 Objects.equals(completionPercent, that.completionPercent) &&
                 Objects.equals(updateDate, that.updateDate) && Objects.equals(platform, that.platform) &&
                 Objects.equals(achievements, that.achievements);
@@ -184,7 +184,7 @@ public class UsersGameDTO implements Serializable {
         result = 31 * result + Objects.hashCode(userNote);
         result = 31 * result + Objects.hashCode(gameId);
         result = 31 * result + Objects.hashCode(listId);
-        result = 31 * result + Objects.hashCode(dateAdded);
+        result = 31 * result + Objects.hashCode(dateFinished);
         result = 31 * result + Objects.hashCode(completionPercent);
         result = 31 * result + Objects.hashCode(updateDate);
         result = 31 * result + Objects.hashCode(platform);
