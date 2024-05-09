@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.example.gameslogmanager.dto.GamesListDTO;
 import ru.example.gameslogmanager.dto.GamesListsResponseDTO;
 import ru.example.gameslogmanager.dto.UsersGameDTO;
+import ru.example.gameslogmanager.exceptions.GamesListNotFoundException;
+import ru.example.gameslogmanager.exceptions.UserNotFoundException;
 import ru.example.gameslogmanager.mapper.GamesListMapper;
 import ru.example.gameslogmanager.mapper.UsersGameMapper;
 import ru.example.gameslogmanager.models.GamesList;
@@ -44,7 +46,8 @@ public class GamesListController {
     public GamesListsResponseDTO getAll(@RequestParam int userid) {
         Optional<User> user = userService.getUserById(userid);
         if (user.isEmpty())
-            return null;
+            throw new UserNotFoundException("User not found");
+
         List<GamesList> allUserLists = gamesListService.getAllByUser(user.get());
 
         return new GamesListsResponseDTO(allUserLists.stream()
@@ -55,16 +58,21 @@ public class GamesListController {
     @GetMapping("/{id}")
     public GamesListDTO getList(@PathVariable int id) {
         Optional<GamesList> list = gamesListService.getById(id);
-        if (list.isPresent())
-            return gamesListMapper.convertToDTO(list.get());
-        return null;
+        if (list.isEmpty()) {
+            String message = "List not found";
+            throw new GamesListNotFoundException(message);
+        }
+
+        return gamesListMapper.convertToDTO(list.get());
     }
 
     @GetMapping("/{id}/count")
     public Long getGamesCountInList(@PathVariable("id") int id) {
         Optional<GamesList> list = gamesListService.getById(id);
-        if (list.isEmpty())
-            return null;
+        if (list.isEmpty()) {
+            String message = "List not found";
+            throw new GamesListNotFoundException(message);
+        }
 
         return usersGameService.getCountInList(list.get());
     }
@@ -84,8 +92,10 @@ public class GamesListController {
     @GetMapping("/{id}/random")
     public UsersGameDTO getRandomGame(@PathVariable int id) {
         Optional<GamesList> list = gamesListService.getById(id);
-        if (list.isEmpty())
-            return null;
+        if (list.isEmpty()) {
+            String message = "List not found";
+            throw new GamesListNotFoundException(message);
+        }
 
         UsersGame randomGame = usersGameService.getRandomGame(list.get());
         return usersGameMapper.convertToDTO(randomGame);
