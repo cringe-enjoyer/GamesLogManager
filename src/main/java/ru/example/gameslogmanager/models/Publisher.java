@@ -2,9 +2,8 @@ package ru.example.gameslogmanager.models;
 
 import jakarta.persistence.*;
 
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "publisher")
@@ -21,14 +20,14 @@ public class Publisher {
     private String description;
 
     //TODO: подумать насчёт cascade
-    @ManyToMany(mappedBy = "publishers")
-    private Set<Game> games = new LinkedHashSet<>();
+    @ManyToMany(mappedBy = "publishers", fetch = FetchType.LAZY)
+    private List<Game> games;
 
-    public Set<Game> getGames() {
+    public List<Game> getGames() {
         return games;
     }
 
-    public void setGames(Set<Game> games) {
+    public void setGames(List<Game> games) {
         this.games = games;
     }
 
