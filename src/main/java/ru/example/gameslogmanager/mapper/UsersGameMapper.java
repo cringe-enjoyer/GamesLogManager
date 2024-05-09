@@ -35,8 +35,10 @@ public class UsersGameMapper {
     @PostConstruct
     public void setupMapper() {
         modelMapper.createTypeMap(UsersGame.class, UsersGameDTO.class)
-                .addMappings(mapper ->
-                        mapper.map(src -> src.getList().getId(), UsersGameDTO::setListId));
+                .addMappings(mapper -> {
+                            mapper.map(src -> src.getList().getId(), UsersGameDTO::setListId);
+                            mapper.map(src -> src.getGame().getId(), UsersGameDTO::setGameId);
+                });
     }
 
     public UsersGame convertToEntity(UsersGameDTO usersGameDTO) {
