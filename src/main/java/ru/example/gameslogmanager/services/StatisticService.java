@@ -5,13 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.example.gameslogmanager.models.*;
 import ru.example.gameslogmanager.utils.DefaultLists;
+import ru.example.gameslogmanager.dto.GamesPerMonthResponse;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Сервис обрабатывающий данные для статистики
@@ -33,7 +31,8 @@ public class StatisticService {
 
     @Autowired
     public StatisticService(UsersGameService usersGameService, GamesListService gamesListService,
-                            UsersGoalService usersGoalService, PlatformService platformService, GenreService genreService) {
+                            UsersGoalService usersGoalService, PlatformService platformService,
+                            GenreService genreService) {
         this.usersGameService = usersGameService;
         this.gamesListService = gamesListService;
         this.usersGoalService = usersGoalService;
@@ -84,6 +83,18 @@ public class StatisticService {
         return gamesByPlatforms;
     }
 
+    public Map<Platform, Long> getGamesCountByPlatforms(User user) {
+        Map<Platform, Long> gamesByPlatforms = new HashMap<>();
+        List<Platform> allPlatforms = platformService.getAllPlatforms();
+
+        for (Platform platform : allPlatforms) {
+            Long usersGamesByPlatform = usersGameService.getUsersGamesCountByPlatformAndUser(platform, user);
+            gamesByPlatforms.put(platform, usersGamesByPlatform);
+        }
+
+        return gamesByPlatforms;
+    }
+
     /**
      * Возвращает Map содержащую список игр соответствующий жанру
      * @param user пользователь чьи игры будут возвращены
@@ -104,5 +115,19 @@ public class StatisticService {
     public int getFinishedGamesCountInCurrentYear(User user) {
         return usersGameService.getGamesInListAfterDate(user, LocalDate.of(
                 LocalDate.now().getYear(), Month.JANUARY, 1), DefaultLists.FINISHED.getRuValue()).size();
+    }
+
+    public List<GamesPerMonthResponse> getFinishedGamesPerMonth(User user, int year) {
+        LocalDate startDate = LocalDate.of(year, Month.JANUARY, 1);
+        LocalDate endDate = LocalDate.of(year, Month.DECEMBER, 31);
+
+        return usersGameService.getAllByUserAndBetweenDateFinished(user, startDate, endDate);
+    }
+
+    public Map<String, Long> getCountGamesByGenres(User user) {
+        Map<String, Long> result = new HashMap<>();
+        List<Genre> genres = genreService.getAllGenres();
+        genres.forEach(genre -> result.put(genre.getName(), usersGameService.getCountGamesByGenre(genre, user)));
+        return result;
     }
 }
