@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.example.gameslogmanager.models.Developer;
 import ru.example.gameslogmanager.repositories.DeveloperRepository;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,5 +32,9 @@ public class DeveloperService {
     @Transactional
     public void saveDeveloper(Developer developer) {
         developerRepository.save(developer);
+    }
+
+    public List<Developer> getDevelopers() {
+        return developerRepository.findAll();
     }
 }
