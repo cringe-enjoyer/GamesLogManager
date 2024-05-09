@@ -3,9 +3,8 @@ package ru.example.gameslogmanager.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "genre")
@@ -20,7 +19,7 @@ public class Genre {
     private String name;
 
     @ManyToMany(mappedBy = "genres")
-    private Set<Game> games = new LinkedHashSet<>();
+    private List<Game> games;
 
     public Genre() {
     }
@@ -29,11 +28,11 @@ public class Genre {
         this.name = name;
     }
 
-    public Set<Game> getGames() {
+    public List<Game> getGames() {
         return games;
     }
 
-    public void setGames(Set<Game> games) {
+    public void setGames(List<Game> games) {
         this.games = games;
     }
 
