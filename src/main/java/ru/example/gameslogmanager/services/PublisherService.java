@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.example.gameslogmanager.models.Publisher;
 import ru.example.gameslogmanager.repositories.PublisherRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,5 +30,9 @@ public class PublisherService {
     @Transactional
     public void savePublisher(Publisher publisher) {
         publisherRepository.save(publisher);
+    }
+
+    public List<Publisher> getAllPublishers() {
+        return publisherRepository.findAll();
     }
 }
