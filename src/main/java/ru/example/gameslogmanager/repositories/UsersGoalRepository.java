@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface UsersGoalRepository extends JpaRepository<UsersGoal, Integer> {
-    Optional<UsersGoal> findByUser(User user);
+    Optional<UsersGoal> findByUserAndYear(User user, int year);
 
     List<UsersGoal> findAllByUser(User user);
 }

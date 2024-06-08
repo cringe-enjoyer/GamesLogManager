@@ -5,6 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.example.gameslogmanager.dto.UsersGoalDTO;
+import ru.example.gameslogmanager.exceptions.UserNotFoundException;
 import ru.example.gameslogmanager.mapper.UsersGoalMapper;
 import ru.example.gameslogmanager.models.User;
 import ru.example.gameslogmanager.models.UsersGoal;
@@ -12,6 +13,7 @@ import ru.example.gameslogmanager.services.StatisticService;
 import ru.example.gameslogmanager.services.UserService;
 import ru.example.gameslogmanager.services.UsersGoalService;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,10 +39,10 @@ public class UsersGoalController {
     public UsersGoalDTO getUserGoal(@RequestParam Integer userId) {
         Optional<User> user = userService.getUserById(userId);
         if (user.isEmpty()) {
-            return null;
+            throw new UserNotFoundException("User not found");
         }
 
-        Optional<UsersGoal> userGoal = usersGoalService.getUserGoalByUser(user.get());
+        Optional<UsersGoal> userGoal = usersGoalService.getUserGoalByUserAndYear(user.get(), LocalDate.now().getYear());
         if (userGoal.isEmpty()) {
             return null;
         }
@@ -54,6 +56,18 @@ public class UsersGoalController {
         if (Objects.isNull(usersGoalDTO))
             return new HttpEntity<>(HttpStatus.BAD_REQUEST);
 
+        Optional<User> user = userService.getUserById(usersGoalDTO.getUserId());
+        if (user.isEmpty())
+            return new HttpEntity<>(HttpStatus.BAD_REQUEST);
+
+        Optional<UsersGoal> userGoal = usersGoalService.getUserGoalByUserAndYear(user.get(), LocalDate.now().getYear());
+        if (userGoal.isPresent()) {
+            userGoal.get().setGoalCount(usersGoalDTO.getGoalCount());
+            usersGoalService.save(userGoal.get());
+            return new HttpEntity<>(HttpStatus.OK);
+        }
+
+        usersGoalDTO.setYear(LocalDate.now().getYear());
         usersGoalService.save(usersGoalMapper.convertToEntity(usersGoalDTO));
         return new HttpEntity<>(HttpStatus.CREATED);
     }
