@@ -35,10 +35,10 @@ public class RegistrationService {
     }
 
     @Transactional
-    public void register(User user) {
+    public User register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("USER");
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public LoginResponse login(String login, String password) {
