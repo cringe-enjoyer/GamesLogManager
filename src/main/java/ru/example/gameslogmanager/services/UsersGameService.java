@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.example.gameslogmanager.dto.UsersGameDTO;
+import ru.example.gameslogmanager.exceptions.GameNotFoundException;
+import ru.example.gameslogmanager.exceptions.GamesListNotFoundException;
 import ru.example.gameslogmanager.mapper.UsersGameMapper;
 import ru.example.gameslogmanager.models.*;
 import ru.example.gameslogmanager.repositories.UsersGameRepository;
@@ -27,16 +29,20 @@ public class UsersGameService {
     private final GameService gameService;
 
     private final UsersGameMapper usersGameMapper;
+    private final DeveloperService developerService;
+    private final GenreService genreService;
 
     @Autowired
     public UsersGameService(UsersGameRepository usersGameRepository, SteamService steamService,
                             GamesListService gamesListService, GameService gameService,
-                            UsersGameMapper usersGameMapper) {
+                            UsersGameMapper usersGameMapper, DeveloperService developerService, GenreService genreService) {
         this.usersGameRepository = usersGameRepository;
         this.steamService = steamService;
         this.gamesListService = gamesListService;
         this.gameService = gameService;
         this.usersGameMapper = usersGameMapper;
+        this.developerService = developerService;
+        this.genreService = genreService;
     }
 
     public Optional<UsersGame> getUsersGameById(int id) {
@@ -51,6 +57,21 @@ public class UsersGameService {
     public void save(UsersGame game) {
         game.setUpdateDate(LocalDate.now());
         usersGameRepository.save(game);
+    }
+
+    @Transactional
+    public void saveImported(UsersGame usersGame) {
+        usersGame.setUpdateDate(LocalDate.now());
+        Optional<UsersGame> oldGame = getUsersGameByGameAndUser(usersGame.getGame(), usersGame.getList().getUser());
+        System.out.println(oldGame);
+        if (oldGame.isPresent()) {
+            System.out.println(oldGame.get());
+            oldGame.get().setUserTime(usersGame.getUserTime());
+            oldGame.get().setList(usersGame.getList());
+            usersGameRepository.save(oldGame.get());
+            return;
+        }
+        usersGameRepository.save(usersGame);
     }
 
     @Transactional
@@ -123,15 +144,23 @@ public class UsersGameService {
     public void updateByListId(UsersGameDTO usersGameDTO, int listId) {
         Optional<GamesList> list = gamesListService.getById(listId);
         Optional<Game> game = gameService.getGameById(usersGameDTO.getGameId());
+        
+        if (list.isEmpty())
+            throw new GamesListNotFoundException("List not found");
 
-        if (list.isEmpty() || game.isEmpty())
-            return;
+        if (game.isEmpty())
+            throw new GameNotFoundException("Game not found");
 
         Optional<UsersGame> usersGame = usersGameRepository.findByGameAndList(game.get(), list.get());
 
         if (usersGame.isPresent()) {
-            UsersGame updatedGame = usersGameMapper.convertToEntity(usersGameDTO, usersGame.get());
-
+            UsersGame usersGameNew = usersGameMapper.convertToEntity(usersGameDTO);
+            usersGameNew.setId(usersGame.get().getId());
+            UsersGame updatedGame = usersGameMapper.convertToEntity(usersGameNew, usersGame.get());
+            System.out.println(updatedGame);
+            System.out.println(usersGameDTO.getPlatform().getName());
+/*            Optional<Platform> platform = platformService.getByName(usersGameDTO.getPlatform().getName());
+            platform.ifPresent(updatedGame::setPlatform);*/
             updatedGame.setUpdateDate(LocalDate.now());
 
             usersGameRepository.save(updatedGame);
@@ -148,7 +177,7 @@ public class UsersGameService {
     }
 
     public List<UsersGame> get5LastFinishedGames(User user) {
-        return usersGameRepository.findFirst5ByList_UserOrderByDateFinishedDesc(user);
+        return usersGameRepository.findFirst5ByList_UserAndDateFinishedNotNullOrderByDateFinishedDesc(user);
     }
 
     public Optional<UsersGame> getLastFinishedGame(User user) {
@@ -161,5 +190,28 @@ public class UsersGameService {
 
     public Optional<UsersGame> getUsersGameByGameAndUser(Game game, User user) {
         return usersGameRepository.findByGameAndList_User(game, user);
+    }
+
+    public List<UsersGame> getFilteredGames(GamesList gamesList, String developer, String genre) {
+        Optional<Developer> developerByName = Optional.empty();
+        Optional<Genre> genreByName = Optional.empty();
+        if (developer != null)
+            developerByName = developerService.getDeveloperByName(developer);
+
+        if (genre != null)
+            genreByName = genreService.getGenreByName(genre);
+
+
+        if (developerByName.isPresent() && genreByName.isPresent())
+            return usersGameRepository.findByListAndGame_DevelopersInAndGame_GenresIn(gamesList,
+                    List.of(developerByName.get()), List.of(genreByName.get()));
+
+        if (developerByName.isPresent())
+            return usersGameRepository.findByListAndGame_DevelopersIn(gamesList, List.of(developerByName.get()));
+
+        if (genreByName.isPresent())
+            return usersGameRepository.findByListAndGame_GenresIn(gamesList, List.of(genreByName.get()));
+
+        return Collections.emptyList();
     }
 }

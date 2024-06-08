@@ -42,7 +42,8 @@ public interface UsersGameRepository extends JpaRepository<UsersGame, Integer> {
     List<GamesPerMonthResponse> findByList_UserAndDateFinishedBetween(User user, LocalDate dateFinishedStart,
                                                                       LocalDate dateFinishedEnd);
 
-    List<UsersGame> findFirst5ByList_UserOrderByDateFinishedDesc(User user);
+    List<UsersGame> findFirst5ByList_UserAndDateFinishedNotNullOrderByDateFinishedDesc(User user);
+
 
     Optional<UsersGame> findFirstByList_UserOrderByDateFinishedDesc(User user);
 
@@ -51,4 +52,10 @@ public interface UsersGameRepository extends JpaRepository<UsersGame, Integer> {
     long countByGame_GenresInAndList_User(Collection<Genre> genres, User user);
 
     Optional<UsersGame> findByGameAndList_User(Game game, User user);
+
+    List<UsersGame> findByListAndGame_DevelopersInAndGame_GenresIn(GamesList list, Collection<Developer> developers, Collection<Genre> genres);
+
+    List<UsersGame> findByListAndGame_DevelopersIn(GamesList list, Collection<Developer> developers);
+
+    List<UsersGame> findByListAndGame_GenresIn(GamesList list, Collection<Genre> genres);
 }
