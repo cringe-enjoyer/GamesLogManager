@@ -21,7 +21,6 @@ public interface GameRepository extends JpaRepository<Game, Integer> {
 
     List<Game> findByTitleStartsWith(String title, Pageable pageable);
 
-    //TODO: Проверить запросы
     List<Game> findDistinctByGenres(Set<Genre> genres);
 
     Set<Game> findDistinctByTitleStartingWithIgnoreCaseAndDevelopersAndPublishers(String title, Set<Developer> developers,
@@ -42,7 +41,7 @@ public interface GameRepository extends JpaRepository<Game, Integer> {
 
     Set<Game> findDistinctByTitleStartingWithIgnoreCaseAndPublishers(String title, Set<Publisher> publishers);
 
-    Set<Game> findDistinctByTitleStartingWithIgnoreCaseAndGenres(String title, Set<Genre> genres);
+    Set<Game> findByGenresInAndTitleStartingWithIgnoreCase(Set<Genre> genres,String title);
 
     Set<Game> findByTitleStartsWithIgnoreCase(String title);
 }

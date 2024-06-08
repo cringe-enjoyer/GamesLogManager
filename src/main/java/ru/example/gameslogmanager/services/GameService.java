@@ -49,7 +49,7 @@ public class GameService {
         return gameRepository.findBySteamId(steamId);
     }
 
-    @Transactional
+    @Transactional(readOnly = false)
     public void save(Game game) {
         gameRepository.save(game);
     }
@@ -71,8 +71,9 @@ public class GameService {
             publisher = publisherService.getPublisherByName(String.valueOf(filters.get("publisher")))
                     .orElse(null);
 
-        if (filters.containsKey("genres") && filters.get("genres") != null)
+        if (filters.containsKey("genres") && filters.get("genres") != null) {
             genres = genreService.getAllGenresByNames((List<String>) filters.get("genres"));
+        }
 
         if (developer != null && publisher != null && genres != null && !genres.isEmpty())
             return gameRepository.findDistinctByTitleStartsWithIgnoreCaseAndDevelopersAndPublishersAndGenres(request,
@@ -97,7 +98,7 @@ public class GameService {
             return gameRepository.findDistinctByTitleStartingWithIgnoreCaseAndPublishers(request, Set.of(publisher));
 
         if (genres != null && !genres.isEmpty())
-            return gameRepository.findDistinctByTitleStartingWithIgnoreCaseAndGenres(request, genres);
+            return gameRepository.findByGenresInAndTitleStartingWithIgnoreCase(genres, request);
 
         return gameRepository.findByTitleStartsWithIgnoreCase(request);
     }
