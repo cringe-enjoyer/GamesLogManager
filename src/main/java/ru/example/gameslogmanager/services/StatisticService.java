@@ -113,8 +113,11 @@ public class StatisticService {
      * @return количество пройденных игр за текущий год
      */
     public int getFinishedGamesCountInCurrentYear(User user) {
-        return usersGameService.getGamesInListAfterDate(user, LocalDate.of(
-                LocalDate.now().getYear(), Month.JANUARY, 1), DefaultLists.FINISHED.getRuValue()).size();
+/*        return usersGameService.getGamesInListAfterDate(user, LocalDate.of(
+                LocalDate.now().getYear(), Month.JANUARY, 1), DefaultLists.FINISHED.getRuValue()).size();*/
+        return usersGameService.getAllByUserAndBetweenDateFinished(user, LocalDate.of(
+                LocalDate.now().getYear(), Month.JANUARY, 1), LocalDate.of(
+                LocalDate.now().getYear(), Month.DECEMBER, 31)).size();
     }
 
     public List<GamesPerMonthResponse> getFinishedGamesPerMonth(User user, int year) {
