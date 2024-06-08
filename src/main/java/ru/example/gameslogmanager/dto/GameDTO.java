@@ -22,23 +22,22 @@ public class GameDTO implements Serializable {
     private String smallImgUrl;
     private Boolean verified;
     private LocalDate realiseDate;
+    private String backgroundImgUrl;
 
 
     public GameDTO() {
     }
 
-    public GameDTO(Integer id, String title, Set<GenreDTO> genres, String description, Set<Integer> developers,
-                   Set<Integer> publishers, double rating, double avgTime,
-                   String shortDescription, String imageUrl, Integer steamId,
-                   String smallImgUrl,
-                   Boolean verified,
-                   LocalDate realiseDate) {
+    public GameDTO(Integer id, String title, Set<GenreDTO> genres, String description, Set<Integer> developersId,
+                   Set<Integer> publishersId, double rating, double avgTime, String shortDescription, String imageUrl,
+                   Integer steamId, String smallImgUrl, Boolean verified, LocalDate realiseDate,
+                   String backgroundImgUrl) {
         this.id = id;
         this.title = title;
         this.genres = genres;
         this.description = description;
-        this.developersId = developers;
-        this.publishersId = publishers;
+        this.developersId = developersId;
+        this.publishersId = publishersId;
         this.rating = rating;
         this.avgTime = avgTime;
         this.shortDescription = shortDescription;
@@ -47,6 +46,7 @@ public class GameDTO implements Serializable {
         this.smallImgUrl = smallImgUrl;
         this.verified = verified;
         this.realiseDate = realiseDate;
+        this.backgroundImgUrl = backgroundImgUrl;
     }
 
     public Integer getId() {
@@ -161,10 +161,19 @@ public class GameDTO implements Serializable {
         this.realiseDate = realiseDate;
     }
 
+    public String getBackgroundImgUrl() {
+        return backgroundImgUrl;
+    }
+
+    public void setBackgroundImgUrl(String backgroundImgUrl) {
+        this.backgroundImgUrl = backgroundImgUrl;
+    }
+
     @Override
     public String toString() {
         return "GameDTO{" +
-                "title='" + title + '\'' +
+                "id=" + id +
+                ", title='" + title + '\'' +
                 ", genres=" + genres +
                 ", description='" + description + '\'' +
                 ", developersId=" + developersId +
@@ -177,6 +186,7 @@ public class GameDTO implements Serializable {
                 ", smallImgUrl='" + smallImgUrl + '\'' +
                 ", verified=" + verified +
                 ", realiseDate=" + realiseDate +
+                ", backgroundImgUrl='" + backgroundImgUrl + '\'' +
                 '}';
     }
 }
