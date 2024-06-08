@@ -47,4 +47,10 @@ public class ExceptionApiHandler {
         ErrorResponse response = new ErrorResponse(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(PublisherNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleException(PublisherNotFoundException e) {
+        ErrorResponse response = new ErrorResponse(e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
 }
