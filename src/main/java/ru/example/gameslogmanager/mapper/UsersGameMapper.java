@@ -48,7 +48,8 @@ public class UsersGameMapper {
         UsersGame usersGame = modelMapper.map(usersGameDTO, UsersGame.class);
         Optional<Game> gameById = gameService.getGameById(usersGameDTO.getGameId());
         Optional<GamesList> list = gamesListService.getById(usersGameDTO.getListId());
-        Optional<Platform> platform = platformService.getByName(usersGameDTO.getPlatform().getName());
+        Optional<Platform> platform = usersGameDTO.getPlatform() == null ? Optional.empty() :
+                platformService.getByName(usersGameDTO.getPlatform().getName());
 
         usersGame.setGame(gameById.orElse(null));
         usersGame.setList(list.orElse(null));
@@ -62,6 +63,15 @@ public class UsersGameMapper {
             return null;
 
         modelMapper.map(usersGameDTO, usersGame);
+
+        return usersGame;
+    }
+
+    public UsersGame convertToEntity(UsersGame usersGameNew, UsersGame usersGame) {
+        if (Objects.isNull(usersGameNew))
+            return null;
+
+        modelMapper.map(usersGameNew, usersGame);
 
         return usersGame;
     }
