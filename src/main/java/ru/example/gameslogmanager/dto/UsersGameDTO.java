@@ -1,5 +1,6 @@
 package ru.example.gameslogmanager.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lukaspradel.steamapi.data.json.playerachievements.Achievement;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ public class UsersGameDTO implements Serializable {
     private String userNote;
     private Integer gameId;
     private Integer listId;
+    @JsonFormat(pattern = "yyyy-M-d")
     private LocalDate dateFinished;
     private Integer completionPercent;
     private LocalDate updateDate;
