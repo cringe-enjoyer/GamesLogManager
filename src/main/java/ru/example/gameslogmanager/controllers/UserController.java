@@ -68,17 +68,6 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/settings/import_steam")
-    public GamesListDTO importSteamLibrary(@PathVariable("id") int userId,
-                                           @RequestBody(required = false) Map<String, String> listName) {
-        Optional<User> user = userService.getUserById(userId);
-        if (user.isEmpty())
-            return null;
-        GamesList gamesList = steamService.importSteamLibrary(user.get(),
-                listName == null || listName.isEmpty() || !listName.containsKey("list") ? null : listName.get("list"));
-        return gamesListMapper.convertToDTO(gamesList);
-    }
-
     @PostMapping("/{id}")
     public HttpEntity<HttpStatus> sendFriendRequest(@PathVariable("id") int friendId,
                                                     @RequestBody @Valid UserDTO userDTO) {
