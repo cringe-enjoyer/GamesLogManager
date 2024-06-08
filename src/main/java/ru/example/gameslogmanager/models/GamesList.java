@@ -25,6 +25,9 @@ public class GamesList {
     @OneToMany(mappedBy = "list", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UsersGame> usersGames;
 
+    @Column(name = "default_list")
+    private boolean isDefault;
+
     public int getId() {
         return id;
     }
@@ -55,6 +58,14 @@ public class GamesList {
 
     public void setUsersGames(List<UsersGame> usersGames) {
         this.usersGames = usersGames;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 
     @Override

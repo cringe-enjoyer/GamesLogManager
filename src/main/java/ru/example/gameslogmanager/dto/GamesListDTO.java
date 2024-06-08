@@ -1,10 +1,6 @@
 package ru.example.gameslogmanager.dto;
 
-
-import ru.example.gameslogmanager.utils.DefaultLists;
-
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,12 +17,11 @@ public class GamesListDTO implements Serializable {
     public GamesListDTO() {
     }
 
-    public GamesListDTO(Integer id, String name, Integer userId) {
+    public GamesListDTO(Integer id, String name, Integer userId, boolean isDefault) {
         this.id = id;
         this.name = name;
         this.userId = userId;
-        //TODO: Заменить на поле из БД
-        isDefault = Arrays.stream(DefaultLists.values()).anyMatch(defaultList -> defaultList.getRuValue().equals(name));
+        this.isDefault = isDefault;
     }
 
     public Integer getId() {
@@ -57,8 +52,8 @@ public class GamesListDTO implements Serializable {
         return isDefault;
     }
 
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
     }
 
     public List<UsersGameDTO> getUsersGamesList() {
