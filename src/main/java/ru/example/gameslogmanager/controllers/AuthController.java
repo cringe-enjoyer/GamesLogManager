@@ -9,26 +9,40 @@ import ru.example.gameslogmanager.dto.LoginRequest;
 import ru.example.gameslogmanager.dto.LoginResponse;
 import ru.example.gameslogmanager.dto.UserDTO;
 import ru.example.gameslogmanager.mapper.UserMapper;
+import ru.example.gameslogmanager.models.GamesList;
 import ru.example.gameslogmanager.models.User;
+import ru.example.gameslogmanager.services.GamesListService;
 import ru.example.gameslogmanager.services.RegistrationService;
+import ru.example.gameslogmanager.utils.DefaultLists;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
     private final RegistrationService registrationService;
     private final UserMapper userMapper;
+    private final GamesListService gamesListService;
 
     @Autowired
-    public AuthController(RegistrationService registrationService, UserMapper userMapper) {
+    public AuthController(RegistrationService registrationService, UserMapper userMapper, GamesListService gamesListService) {
         this.registrationService = registrationService;
         this.userMapper = userMapper;
+        this.gamesListService = gamesListService;
     }
 
     @PostMapping("/registration")
     public ResponseEntity<HttpStatus> performRegistration(@RequestBody @Valid UserDTO userDTO) {
-        //TODO: Добавить создание 3 списков
         User user = userMapper.convertToEntity(userDTO);
-        registrationService.register(user);
+        User savedUser = registrationService.register(user);
+        if (savedUser != null) {
+            for (DefaultLists list : DefaultLists.values()) {
+                GamesList gamesList = new GamesList();
+                gamesList.setName(list.getRuValue());
+                gamesList.setUser(savedUser);
+                gamesList.setDefault(true);
+
+                gamesListService.save(gamesList);
+            }
+        }
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
