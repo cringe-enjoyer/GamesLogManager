@@ -39,7 +39,7 @@ public class UsersGoalService {
         return usersGoalRepository.findById(id);
     }
 
-    public Optional<UsersGoal> getUserGoalByUser(User user) {
-        return usersGoalRepository.findByUser(user);
+    public Optional<UsersGoal> getUserGoalByUserAndYear(User user, int year) {
+        return usersGoalRepository.findByUserAndYear(user, year);
     }
 }
