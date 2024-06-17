@@ -23,8 +23,6 @@ import ru.example.gameslogmanager.services.UsersDetailsService;
 
 import java.util.Arrays;
 
-//TODO: Доделать авторизацию
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -60,7 +58,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http
-                // TODO: Разобраться с csrf
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -73,13 +70,7 @@ public class SecurityConfig {
                                 //.anyRequest().hasAnyRole("USER", "ADMIN") // Доступ ко всем страницам для роли USER и ADMIN
                 )
                 // Аутентификация
-                .formLogin(AbstractHttpConfigurer::disable
-                        /*.loginPage("/auth/login")
-                        .loginProcessingUrl("/process_login")
-                        .defaultSuccessUrl("/user/settings", true)
-                        .failureUrl("/auth/login?error")
-                        .permitAll()*/
-                )
+                .formLogin(AbstractHttpConfigurer::disable)
                 // Разлогиневание
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
@@ -91,9 +82,6 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(PasswordEncoder encoder) {
-/*        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        builder.userDetailsService(usersDetailsService).passwordEncoder(getPasswordEncoder());
-        return builder.build();*/
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(usersDetailsService);
         authenticationProvider.setPasswordEncoder(encoder);
