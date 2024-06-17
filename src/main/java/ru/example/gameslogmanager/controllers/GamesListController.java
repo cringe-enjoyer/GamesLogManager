@@ -89,6 +89,12 @@ public class GamesListController {
         return new HttpEntity<>(HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}")
+    public HttpEntity<HttpStatus> editList(@PathVariable("id") int listId, @RequestBody GamesListDTO gamesListDTO) {
+        gamesListService.edit(gamesListDTO);
+        return new HttpEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/{id}/random")
     public UsersGameDTO getRandomGame(@PathVariable int id) {
         Optional<GamesList> list = gamesListService.getById(id);
@@ -99,5 +105,18 @@ public class GamesListController {
 
         UsersGame randomGame = usersGameService.getRandomGame(list.get());
         return usersGameMapper.convertToDTO(randomGame);
+    }
+
+    @GetMapping("/{id}/filter")
+    public List<UsersGameDTO> getFilteredGames(@PathVariable int id, @RequestParam(required = false) String developer,
+                                               @RequestParam(required = false) String genre) {
+        Optional<GamesList> list = gamesListService.getById(id);
+        if (list.isEmpty()) {
+            String message = "List not found";
+            throw new GamesListNotFoundException(message);
+        }
+
+        return usersGameService.getFilteredGames(list.get(), developer, genre).stream()
+                .map(usersGameMapper::convertToDTO).toList();
     }
 }
