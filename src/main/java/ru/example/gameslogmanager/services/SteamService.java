@@ -111,7 +111,8 @@ public class SteamService {
                     achievements.get(i).withAdditionalProperty("icon", achievementsIcons.get(i).getIcongray());
             }
         } catch (SteamApiException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
+            return null;
         }
 
         return achievementsResponse.getPlayerstats().getAchievements();
@@ -209,6 +210,41 @@ public class SteamService {
     }
 
     /**
+     * Импортирует игры из библиотеки пользователя в базу данных
+     *
+     * @param userSteamGames игры из библиотеки пользователя
+     * @return список игр пользователя в формате UsersGame
+     */
+    @Transactional
+    public List<UsersGame> importUserSteamGames(List<com.lukaspradel.steamapi.data.json.ownedgames.Game> userSteamGames) {
+        List<UsersGame> games = new ArrayList<>();
+
+        //TODO: Добавить проверку UsersGame на наличие у пользователя и тогда просто обновить время
+        userSteamGames.forEach(userSteamGame -> {
+            Optional<Game> game = gameService.getGameBySteamId(userSteamGame.getAppid().intValue());
+            if (game.isEmpty()) {
+                saveSteamGame(userSteamGame.getAppid().intValue());
+                game = gameService.getGameBySteamId(userSteamGame.getAppid().intValue());
+            }
+
+/*            Optional<UsersGame> usersGame = usersGameService.getUsersGameByGameAndUser(game.get(), user);
+            if (usersGame.isPresent()) {
+                usersGame.get().setUserTime(userSteamGame.getPlaytimeForever());
+                usersGameService.save(usersGame.get());
+                continue;
+            }*/
+
+            UsersGame userGame = new UsersGame();
+            userGame.setUserTime(userSteamGame.getPlaytimeForever());
+            userGame.setGame(game.get());
+            userGame.setFromSteam(true);
+            games.add(userGame);
+        });
+
+        return games;
+    }
+
+    /**
      * Возвращает информацию о достижениях и статистике
      *
      * @param gameId id игры в Steam
@@ -235,7 +271,6 @@ public class SteamService {
      */
     @Transactional
     public boolean saveSteamGame(int gameId) {
-        //TODO: Ошибка 429 Too many requests
         SteamGameInfoDTO gameInfo = getGameInfoById(gameId);
         if (gameInfo == null) {
             return false;
@@ -243,7 +278,10 @@ public class SteamService {
         Game game = new Game(gameInfo.getName());
         game.setSteamId(gameId);
         game.setImageUrl(gameInfo.getHeaderImage());
-        game.setDescription(gameInfo.getDetailedDescription());
+        String description = gameInfo.getDetailedDescription();
+        description = description.replaceAll("<[^>]*>", "");
+        description = description.replaceAll("&quot;", "\"");
+        game.setDescription(description);
         game.setShortDescription(gameInfo.getShortDescription());
         game.setBackgroundImgUrl(gameInfo.getBackgroundRaw());
         game.setSmallImgUrl(gameInfo.getCapsuleImage());
@@ -258,10 +296,10 @@ public class SteamService {
         if (!genre.isEmpty())
             genre.delete(genre.length() - 2, genre.length());
         game.setGenre(genre.toString());*/
-        Set<Genre> genres = gameInfo.getGenres().stream()
+        Set<Genre> genres = gameInfo.getGenres() != null ? gameInfo.getGenres().stream()
                 .map(genre -> genreService.getGenreByName(genre.getDescription())
                         .orElse(new Genre(genre.getDescription())))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet()) : Set.of();
         game.setGenres(genres);
 
         Set<Publisher> publishers = new LinkedHashSet<>();
@@ -322,15 +360,27 @@ public class SteamService {
     private static LocalDate getParsed(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.MM.yyyy");
         String normalizedDate = date.trim();
-
+        System.out.println(date);
         // Дата может быть в таком формате: 26 фев. 2016 г.
         normalizedDate = normalizedDate.replace(" г.", "");
 
         // А может быть в таком формате: 26 Feb, 2016
-        // От чего это зависит я не знаю и не понимаю
         normalizedDate = normalizedDate.replace(",", "");
         normalizedDate = normalizedDate.replace(".", "");
+
         String[] split = normalizedDate.split(" ");
+        if (split.length < 3) {
+            normalizedDate = "01 " + normalizedDate;
+            split = normalizedDate.split(" ");
+        }
+
+        // Дата может быть в формате Mar 25, 2013
+        // От чего это зависит я не знаю
+        if (split[0].length() == 3) {
+            String month = split[0];
+            split[0] = split[1];
+            split[1] = month;
+        }
         normalizedDate = split[0] + ".";
 
         // При работе с текстовым месяцем выдает ошибку поэтому переводим в число
@@ -356,7 +406,7 @@ public class SteamService {
                 break;
 
             case "may":
-            case "май":
+            case "мая":
                 normalizedDate += "05.";
                 break;
 
@@ -376,7 +426,7 @@ public class SteamService {
                 break;
 
             case "sep":
-            case "сент":
+            case "сен":
                 normalizedDate += "09.";
                 break;
 
