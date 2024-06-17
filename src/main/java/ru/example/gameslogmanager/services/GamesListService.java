@@ -3,6 +3,7 @@ package ru.example.gameslogmanager.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.example.gameslogmanager.dto.GamesListDTO;
 import ru.example.gameslogmanager.models.GamesList;
 import ru.example.gameslogmanager.models.User;
 import ru.example.gameslogmanager.repositories.GamesListRepository;
@@ -57,5 +58,15 @@ public class GamesListService {
 
     public Optional<GamesList> getByUserAndName(User user, String name) {
         return gamesListRepository.findByUserAndName(user, name);
+    }
+
+    @Transactional
+    public void edit(GamesListDTO gamesList) {
+        Optional<GamesList> list = gamesListRepository.findById(gamesList.getId());
+        if (list.isEmpty())
+            return;
+
+        list.get().setName(gamesList.getName());
+        gamesListRepository.save(list.get());
     }
 }
